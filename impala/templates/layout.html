@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <title>Impala</title>
+</head>
+<body>
+{% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+{% endfor %}
+<div class=page>
+    {% block body %}
+    <div class=status>
+        Connected to {{ session['server'] }}. 
+        <a href="{{ url_for('disconnect') }}">Disconnect</a>
+    </div>
+    <p>{{ test }}</p>
+    {% endblock %}
+</div>
+</body>
+</html>

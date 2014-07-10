@@ -7,8 +7,11 @@ from mpd import ConnectionError, CommandError
 @app.route('/')
 @require_mpd
 def main():
-    test = client.status()
-    return render_template('layout.html', test=test)
+    data = {
+        'status': client.status(),
+        'currentsong': client.currentsong(),
+    }
+    return render_template('currentsong.html', **data)
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():

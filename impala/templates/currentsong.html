@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+    {{ super() }}
+    <div class=currentsong>
+    <p>
+        {{ currentsong['artist'] }}
+         - {{ currentsong['title'] }} -
+        {{ currentsong['album'] }}
+    </p>
+    </div>
+{% endblock %}

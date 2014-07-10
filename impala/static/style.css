@@ -1,0 +1,13 @@
+#debug {
+    margin-top: 100px;
+}
+
+#debug table {
+    border: 1px solid;
+    margin-bottom: 20px;
+    width: 100%
+}
+
+#debug td.key {
+    width: 25%;
+}

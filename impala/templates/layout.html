@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Impala</title>
+    <link rel=stylesheet type=text/css
+        href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 {% for message in get_flashed_messages() %}
@@ -13,8 +15,20 @@
         Connected to {{ session['server'] }}. 
         <a href="{{ url_for('disconnect') }}">Disconnect</a>
     </div>
-    <p>{{ test }}</p>
     {% endblock %}
 </div>
+{% if config.DEBUG %}
+    <div id=debug>
+        <h1>Debugging information</h1>
+        {% block debug %}
+        <table>
+            <tr><th colspan=2 align=left>MPD status</th></tr>
+            {% for k in status %}
+            <tr><td class=key>{{ k }}</td><td>{{ status[k] }}</td></tr>
+            {% endfor %}
+        </table>
+        {% endblock %}
+    </div>
+{% endif %}
 </body>
 </html>

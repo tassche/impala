@@ -9,3 +9,12 @@
     </p>
     </div>
 {% endblock %}
+{% block debug %}
+    {{ super() }}
+    <table>
+        <tr><th colspan=2 align=left>MPD currentsong</th></tr>
+        {% for k in currentsong %}
+        <tr><td class=key>{{ k }}</td><td>{{ currentsong[k] }}</td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}

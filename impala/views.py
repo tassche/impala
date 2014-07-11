@@ -4,6 +4,9 @@ from impala import app
 from impala.models import client, require_mpd
 from mpd import ConnectionError, CommandError
 
+import logging
+logger = logging.getLogger('impala')
+
 @app.route('/')
 @require_mpd
 def main():
@@ -25,8 +28,10 @@ def connect():
         session['port'] = 6600
         session['password'] = request.form['password']
     except (ConnectionError, OSError) as e:
+        logger.error(e)
         flash(str(e))
     except CommandError as e:
+        logger.error(e)
         flash(str(e))
         client.close()
         client.disconnect()

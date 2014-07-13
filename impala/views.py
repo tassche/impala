@@ -13,6 +13,7 @@ def main():
     data = {
         'status': client.status(),
         'currentsong': client.currentsong(),
+        'songtime': client.currentsong_time(),
     }
     return render_template('currentsong.html', **data)
 

@@ -45,3 +45,14 @@ def disconnect():
     client.disconnect()
     return redirect(url_for('main'))
 
+@app.route('/play')
+@require_mpd
+def play():
+    client.play()
+    return 'OK'
+
+@app.route('/pause')
+@require_mpd
+def pause():
+    client.pause()
+    return 'OK'

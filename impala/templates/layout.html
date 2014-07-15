@@ -17,6 +17,9 @@
     </div>
     {% endblock %}
 </div>
+{% block script %}
+<script src="{{ url_for('static', filename='jquery-2.1.1.min.js') }}"></script>
+{% endblock %}
 {% if config.DEBUG %}
     <div id=debug>
         <h1>Debugging information</h1>

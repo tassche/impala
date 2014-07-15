@@ -11,6 +11,23 @@
         {{ songtime[0] }} / {{ songtime[1] }}
     </p>
     </div>
+    <div class=controls>
+        <button id=play type=button>Play</button>
+        <button id=pause type=button>Pause</button>
+    </div>
+{% endblock %}
+{% block script %}
+    {{ super() }}
+    <script>
+        $( document ).ready(function() {
+            $( '#play' ).click(function( event ) {
+                $.get("{{ url_for('play') }}");
+            });
+            $( '#pause' ).click(function( event ) {
+                $.get("{{ url_for('pause') }}");
+            });
+        });
+    </script>
 {% endblock %}
 {% block debug %}
     {{ super() }}

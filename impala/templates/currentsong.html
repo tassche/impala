@@ -7,9 +7,7 @@
          - {{ currentsong['title'] }} -
         {{ currentsong['album'] }}
     </p>
-    <p>
-        {{ songtime[0] }} / {{ songtime[1] }}
-    </p>
+    <p><span id=time-elapsed></span> / <span id=time-total></span></p>
     </div>
     <div class=controls>
         <button id=play type=button>Play</button>
@@ -26,6 +24,17 @@
             $( '#pause' ).click(function( event ) {
                 $.get("{{ url_for('pause') }}");
             });
+            (function get_currentsong_time() {
+                $.ajax({
+                    url: "{{ url_for('currentsong_time') }}",
+                    dataType: 'json',
+                    success: function(time) {
+                        $('#time-elapsed').text(time.elapsed);
+                        $('#time-total').text(time.total);
+                        setTimeout(get_currentsong_time, 500);
+                    },
+                });
+            })();
         });
     </script>
 {% endblock %}

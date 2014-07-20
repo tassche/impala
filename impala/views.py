@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask import g, session
 from impala.models import MPDClient, mpdclient, redirect_on_error
 from impala import app
@@ -65,3 +65,9 @@ def play():
 def pause():
     g.client.pause()
     return 'OK'
+
+@app.route('/currentsong/time')
+@mpdclient
+def currentsong_time():
+    e, t = g.client.currentsong_time_str()
+    return jsonify(elapsed=e, total=t)

@@ -1,58 +1,67 @@
-from flask import redirect, request, session, render_template, url_for
-from flask import flash
+from flask import flash, redirect, render_template, request, url_for
+from flask import g, session
+from impala.models import MPDClient, mpdclient, redirect_on_error
 from impala import app
-from impala.models import client, require_mpd
 from mpd import ConnectionError, CommandError
 
 import logging
 logger = logging.getLogger('impala')
 
 @app.route('/')
-@require_mpd
+@redirect_on_error
+@mpdclient
 def main():
     data = {
-        'status': client.status(),
-        'currentsong': client.currentsong(),
-        'songtime': client.currentsong_time_str(),
+        'status': g.client.status(),
+        'currentsong': g.client.currentsong(),
+        'songtime': g.client.currentsong_time_str(),
     }
     return render_template('currentsong.html', **data)
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
     if request.method == 'GET':
-        return render_template('connect.html')
-    try:
-        client.connect(request.form['server'], 6600)
-        if request.form['password']:
-            client.password(request.form['password'])
-        session['server'] = request.form['server']
-        session['port'] = 6600
-        session['password'] = request.form['password']
-    except (ConnectionError, OSError) as e:
-        logger.error(e)
-        flash(str(e))
-    except CommandError as e:
-        logger.error(e)
-        flash(str(e))
-        client.close()
-        client.disconnect()
-    return redirect(url_for('main'))
+        if {'server', 'port', 'password'}.issubset(session.keys()) \
+            and bool(session['server']):
+            return redirect(url_for('main'))
+        else:
+            return render_template('connect.html')
+    else:
+        try:
+            g.client = MPDClient()
+            g.client.connect(request.form['server'], 6600)
+            if request.form['password']:
+                g.client.password(request.form['password'])
+            g.client.close()
+            g.client.disconnect()
+            session['server'] = request.form['server']
+            session['port'] = 6600
+            session['password'] = request.form['password']
+        except (ConnectionError, OSError) as e:
+            logger.error(e)
+            flash(str(e))
+            return render_template('connect.html')
+        except CommandError as e:
+            logger.error(e)
+            flash(str(e))
+            g.client.close()
+            g.client.disconnect()
+            return render_template('connect.html')
+        return redirect(url_for('main'))
 
 @app.route('/disconnect')
-@require_mpd
 def disconnect():
-    client.close()
-    client.disconnect()
-    return redirect(url_for('main'))
+    session.clear()
+    return redirect(url_for('connect'))
 
 @app.route('/play')
-@require_mpd
+@mpdclient
 def play():
-    client.play()
+    g.client.play()
     return 'OK'
 
 @app.route('/pause')
-@require_mpd
+@mpdclient
 def pause():
-    client.pause()
+    g.client.pause()
     return 'OK'

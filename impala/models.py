@@ -1,6 +1,7 @@
-from flask import redirect, session, url_for
+from flask import g, redirect, session, url_for
 from functools import wraps
 from impala.utils import seconds_to_str
+from werkzeug.exceptions import BadGateway, Unauthorized
 import mpd
 
 import logging
@@ -21,15 +22,37 @@ class MPDClient(mpd.MPDClient):
         return seconds_to_str(int(e)), seconds_to_str(int(t))
 
 
-client = MPDClient()
-
-def require_mpd(func):
+def mpdclient(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            client.ping()
-        except (mpd.MPDError, OSError) as e:
+            g.client = MPDClient()
+            g.client.connect(session['server'], session['port'])
+            if session['password']:
+                g.client.password(session['password'])
+            response = func(*args, **kwargs)
+            g.client.close()
+            g.client.disconnect()
+        except KeyError:
+            logger.error('invalid session: not connected')
+            raise Unauthorized(description='Not connected to MPD.')
+        except (mpd.ConnectionError, OSError) as e:
             logger.error(e)
-            return redirect(url_for('connect'))
-        return func(*args, **kwargs)
+            raise BadGateway(description=str(e))
+        except mpd.CommandError as e:
+            logger.error(e)
+            g.client.close()
+            g.client.disconnect()
+            raise BadGateway(description=str(e))
+        return response
+    return wrapper
+
+def redirect_on_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except (BadGateway, Unauthorized) as e:
+            logger.error(e)
+            return redirect(url_for('disconnect'))
     return wrapper

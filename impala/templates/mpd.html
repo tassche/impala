@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <title>MPD Status - Impala</title>
+    <style>
+        #status {
+            font-family: sans-serif;
+        }
+        #status table {
+            border: 1px solid;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        #status td.key {
+            width: 25%;
+        }
+    </style>
+</head>
+<body>
+    <div id=status>
+        <h1>MPD Status</h1>
+        <table>
+            <tr><th colspan=2 align=left>connection</th></tr>
+            <tr><td class=key>server</td><td>{{ session['server'] }}</td></tr>
+            <tr><td class=key>port</td><td>{{ session['port'] }}</td></tr>
+        </table>
+        <table>
+            <tr><th colspan=2 align=left>currentsong</th></tr>
+            {% set currentsong = g.client.currentsong() %}
+            {% for k in currentsong|sort %}
+            <tr><td class=key>{{ k }}</td><td>{{ currentsong[k] }}</td></tr>
+            {% endfor %}
+        </table>
+        <table>
+            <tr><th colspan=2 align=left>status</th></tr>
+            {% set status = g.client.status() %}
+            {% for k in status|sort %}
+            <tr><td class=key>{{ k }}</td><td>{{ status[k] }}</td></tr>
+            {% endfor %}
+        </table>
+        <table>
+            <tr><th colspan=2 align=left>stats</th></tr>
+            {% set stats = g.client.stats() %}
+            {% for k in stats|sort %}
+            <tr><td class=key>{{ k }}</td><td>{{ stats[k] }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

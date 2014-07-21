@@ -54,6 +54,11 @@ def disconnect():
     session.clear()
     return redirect(url_for('connect'))
 
+@app.route('/status')
+@mpdclient
+def status():
+    return render_template('mpd.html')
+
 @app.route('/play')
 @mpdclient
 def play():

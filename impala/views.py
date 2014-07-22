@@ -3,6 +3,8 @@ from flask import g, session
 from impala.models import MPDClient, mpdclient, redirect_on_error
 from impala import app
 from mpd import ConnectionError, CommandError
+from werkzeug.exceptions import BadRequest
+import json
 
 import logging
 logger = logging.getLogger('impala')
@@ -76,3 +78,18 @@ def pause():
 def currentsong_time():
     e, t = g.client.currentsong_time_str()
     return jsonify(elapsed=e, total=t)
+
+_mpd_commands = (
+    # Playback
+    'play', 'pause', 'stop', 'previous', 'next',
+    # Status
+    'currentsong', 'stats', 'status',
+)
+
+@app.route('/mpd/<command>')
+@mpdclient
+def mpd_command(command):
+    if command not in _mpd_commands:
+        raise BadRequest(description='No such command.')
+    result = getattr(g.client, command)()
+    return jsonify(result) if result is not None else 'OK'

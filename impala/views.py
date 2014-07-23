@@ -1,24 +1,49 @@
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask import g, session
-from impala.models import MPDClient, mpdclient, redirect_on_error
+from functools import wraps
+from impala.models import MPDClient
 from impala import app
-from mpd import ConnectionError, CommandError
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadGateway, BadRequest, Unauthorized
 import json
-
 import logging
+import mpd
+
 logger = logging.getLogger('impala')
 
-@app.route('/')
-@redirect_on_error
-@mpdclient
-def main():
-    data = {
-        'status': g.client.status(),
-        'currentsong': g.client.currentsong(),
-        'songtime': g.client.currentsong_time_str(),
-    }
-    return render_template('currentsong.html', **data)
+def mpdclient(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            g.client = MPDClient()
+            g.client.connect(session['server'], session['port'])
+            if session['password']:
+                g.client.password(session['password'])
+            response = func(*args, **kwargs)
+            g.client.close()
+            g.client.disconnect()
+        except KeyError:
+            logger.error('invalid session: not connected')
+            raise Unauthorized(description='Not connected to MPD.')
+        except (mpd.ConnectionError, OSError) as e:
+            logger.error(e)
+            raise BadGateway(description=str(e))
+        except mpd.CommandError as e:
+            logger.error(e)
+            g.client.close()
+            g.client.disconnect()
+            raise BadGateway(description=str(e))
+        return response
+    return wrapper
+
+def redirect_on_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except (BadGateway, Unauthorized) as e:
+            logger.error(e)
+            return redirect(url_for('disconnect'))
+    return wrapper
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
@@ -39,11 +64,11 @@ def connect():
             session['server'] = request.form['server']
             session['port'] = 6600
             session['password'] = request.form['password']
-        except (ConnectionError, OSError) as e:
+        except (mpd.ConnectionError, OSError) as e:
             logger.error(e)
             flash(str(e))
             return render_template('connect.html')
-        except CommandError as e:
+        except mpd.CommandError as e:
             logger.error(e)
             flash(str(e))
             g.client.close()
@@ -55,6 +80,17 @@ def connect():
 def disconnect():
     session.clear()
     return redirect(url_for('connect'))
+
+@app.route('/')
+@redirect_on_error
+@mpdclient
+def main():
+    data = {
+        'status': g.client.status(),
+        'currentsong': g.client.currentsong(),
+        'songtime': g.client.currentsong_time_str(),
+    }
+    return render_template('currentsong.html', **data)
 
 @app.route('/status')
 @mpdclient

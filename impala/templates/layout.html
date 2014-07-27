@@ -3,11 +3,11 @@
 <head>
     <title>Impala</title>
     <link rel=stylesheet type=text/css
-        href="{{ url_for('static', filename='style.css') }}">
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 {% for message in get_flashed_messages() %}
-    <div class=flash>{{ message }}</div>
+<div class=flash>{{ message }}</div>
 {% endfor %}
 <div class=page>
     {% block body %}

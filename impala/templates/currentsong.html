@@ -1,12 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
-    {{ super() }}
+{{ super() }}
     <div class=currentsong>
-    <p>
-        {{ currentsong['artist'] }}
-         - {{ currentsong['title'] }} -
-        {{ currentsong['album'] }}
-    </p>
+    <p>{{ currentsong['artist'] }} - {{ currentsong['title'] }} -
+       {{ currentsong['album'] }}</p>
     <p><span id=time-elapsed></span> / <span id=time-total></span></p>
     </div>
     <div class=controls>
@@ -15,26 +12,27 @@
     </div>
 {% endblock %}
 {% block script %}
-    {{ super() }}
-    <script>
-        $( document ).ready(function() {
-            $( '#play' ).click(function( event ) {
-                $.get("{{ url_for('mpd_command', command='play') }}");
-            });
-            $( '#pause' ).click(function( event ) {
-                $.get("{{ url_for('mpd_command', command='pause') }}?1");
-            });
-            (function get_currentsong_time() {
-                $.ajax({
-                    url: "{{ url_for('mpd_command', command='pretty_currentsong_time') }}",
-                    dataType: 'json',
-                    success: function(time) {
-                        $('#time-elapsed').text(time.elapsed);
-                        $('#time-total').text(time.total);
-                        setTimeout(get_currentsong_time, 500);
-                    },
-                });
-            })();
+{{ super() }}
+<script>
+    $(document).ready(function() {
+        $('#play').click(function(event) {
+            $.get("{{ url_for('mpd_command', command='play') }}");
         });
-    </script>
+        $('#pause').click(function(event) {
+            $.get("{{ url_for('mpd_command', command='pause') }}?1");
+        });
+        (function get_currentsong_time() {
+            $.ajax({
+                url: "{{ url_for('mpd_command',
+                                 command='pretty_currentsong_time') }}",
+                dataType: 'json',
+                success: function(time) {
+                    $('#time-elapsed').text(time.elapsed);
+                    $('#time-total').text(time.total);
+                    setTimeout(get_currentsong_time, 500);
+                },
+            });
+        })();
+    });
+</script>
 {% endblock %}

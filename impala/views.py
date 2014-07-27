@@ -1,5 +1,5 @@
 from flask import flash, jsonify, redirect, render_template, request, url_for
-from flask import g, session
+from flask import g, session, Response
 from functools import wraps
 from impala.models import MPDClient
 from impala import app
@@ -115,17 +115,32 @@ def currentsong_time():
     e, t = g.client.currentsong_time_str()
     return jsonify(elapsed=e, total=t)
 
-_mpd_commands = (
-    # Playback
-    'play', 'pause', 'stop', 'previous', 'next',
-    # Status
-    'currentsong', 'stats', 'status',
-)
+_not_commands = (
+    'close', 'connect', 'disconnect', 'password', 'noidle',
+    'command_list_ok_begin', 'command_list_end', 'fileno',
+    'add_command', 'remove_command',
+) # these commands are not supported by the /mpd/<command> route
+
+def _build_args(request):
+    args = list()
+    for k, v in request.args.items():
+        args.append(k)
+        if v:
+            args.append(v)
+    return args
 
 @app.route('/mpd/<command>')
 @mpdclient
 def mpd_command(command):
-    if command not in _mpd_commands:
+    if command in _not_commands or command.startswith('_'):
+        raise BadRequest(description='Command not supported.')
+    try:
+        result = getattr(g.client, command)(*_build_args(request))
+    except AttributeError:
         raise BadRequest(description='No such command.')
-    result = getattr(g.client, command)()
+    if isinstance(result, list):
+        # jsonify only supports top level objects
+        # http://flask.pocoo.org/docs/api/#flask.json.jsonify
+        return Response(json.dumps(result, sort_keys=True, indent=2),
+                        mimetype='application/json')
     return jsonify(result) if result is not None else 'OK'

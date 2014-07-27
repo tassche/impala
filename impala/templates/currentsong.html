@@ -19,10 +19,10 @@
     <script>
         $( document ).ready(function() {
             $( '#play' ).click(function( event ) {
-                $.get("{{ url_for('play') }}");
+                $.get("{{ url_for('mpd_command', command='play') }}");
             });
             $( '#pause' ).click(function( event ) {
-                $.get("{{ url_for('pause') }}");
+                $.get("{{ url_for('mpd_command', command='pause') }}?1");
             });
             (function get_currentsong_time() {
                 $.ajax({

@@ -96,18 +96,6 @@ def main():
 def status():
     return render_template('mpd.html')
 
-@app.route('/play')
-@mpdclient
-def play():
-    g.client.play()
-    return 'OK'
-
-@app.route('/pause')
-@mpdclient
-def pause():
-    g.client.pause()
-    return 'OK'
-
 _not_commands = (
     'close', 'connect', 'disconnect', 'password', 'noidle',
     'command_list_ok_begin', 'command_list_end', 'fileno',

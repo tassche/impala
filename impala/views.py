@@ -88,7 +88,6 @@ def main():
     data = {
         'status': g.client.status(),
         'currentsong': g.client.currentsong(),
-        'songtime': g.client.currentsong_time_str(),
     }
     return render_template('currentsong.html', **data)
 
@@ -108,12 +107,6 @@ def play():
 def pause():
     g.client.pause()
     return 'OK'
-
-@app.route('/currentsong/time')
-@mpdclient
-def currentsong_time():
-    e, t = g.client.currentsong_time_str()
-    return jsonify(elapsed=e, total=t)
 
 _not_commands = (
     'close', 'connect', 'disconnect', 'password', 'noidle',

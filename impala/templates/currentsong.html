@@ -26,7 +26,7 @@
             });
             (function get_currentsong_time() {
                 $.ajax({
-                    url: "{{ url_for('currentsong_time') }}",
+                    url: "{{ url_for('mpd_command', command='pretty_currentsong_time') }}",
                     dataType: 'json',
                     success: function(time) {
                         $('#time-elapsed').text(time.elapsed);

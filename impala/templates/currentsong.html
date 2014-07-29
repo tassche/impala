@@ -2,9 +2,12 @@
 {% block body %}
 {{ super() }}
     <div class=currentsong>
-    <p>{{ currentsong['artist'] }} - {{ currentsong['title'] }} -
-       {{ currentsong['album'] }}</p>
-    <p><span id=time-elapsed></span> / <span id=time-total></span></p>
+        <p>
+            <span id=currentsong-artist>{{ currentsong['artist'] }}</span> -
+            <span id=currentsong-title>{{ currentsong['title'] }}</span> -
+            <span id=currentsong-album>{{ currentsong['album'] }}</span>
+        </p>
+        <p><span id=time-elapsed></span> / <span id=time-total></span></p>
     </div>
     <div class=controls>
         <button id=play type=button>Play</button>
@@ -42,6 +45,18 @@
                     $('#time-elapsed').text(time.elapsed);
                     $('#time-total').text(time.total);
                     setTimeout(get_currentsong_time, 500);
+                },
+            });
+        })();
+        (function get_currentsong() {
+            $.ajax({
+                url: "{{ url_for('mpd_command', command='currentsong') }}",
+                dataType: 'json',
+                success: function(currentsong) {
+                    $('#currentsong-artist').text(currentsong.artist);
+                    $('#currentsong-title').text(currentsong.title);
+                    $('#currentsong-album').text(currentsong.album);
+                    setTimeout(get_currentsong, 500);
                 },
             });
         })();

@@ -18,6 +18,7 @@
     {% endblock %}
 </div>
 {% block script %}
+<script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
 <script src="{{ url_for('static', filename='jquery-2.1.1.min.js') }}"></script>
 {% endblock %}
 </body>

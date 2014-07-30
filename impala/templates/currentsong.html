@@ -19,47 +19,5 @@
 {% endblock %}
 {% block script %}
 {{ super() }}
-<script>
-    $(document).ready(function() {
-        $('#play').click(function(event) {
-            $.get("{{ url_for('mpd_command', command='play') }}");
-        });
-        $('#pause').click(function(event) {
-            $.get("{{ url_for('mpd_command', command='pause') }}?1");
-        });
-        $('#stop').click(function(event) {
-            $.get("{{ url_for('mpd_command', command='stop') }}");
-        });
-        $('#previous').click(function(event) {
-            $.get("{{ url_for('mpd_command', command='previous') }}");
-        });
-        $('#next').click(function(event) {
-            $.get("{{ url_for('mpd_command', command='next') }}");
-        });
-        (function get_currentsong_time() {
-            $.ajax({
-                url: "{{ url_for('mpd_command',
-                                 command='pretty_currentsong_time') }}",
-                dataType: 'json',
-                success: function(time) {
-                    $('#time-elapsed').text(time.elapsed);
-                    $('#time-total').text(time.total);
-                    setTimeout(get_currentsong_time, 500);
-                },
-            });
-        })();
-        (function get_currentsong() {
-            $.ajax({
-                url: "{{ url_for('mpd_command', command='currentsong') }}",
-                dataType: 'json',
-                success: function(currentsong) {
-                    $('#currentsong-artist').text(currentsong.artist);
-                    $('#currentsong-title').text(currentsong.title);
-                    $('#currentsong-album').text(currentsong.album);
-                    setTimeout(get_currentsong, 500);
-                },
-            });
-        })();
-    });
-</script>
+<script src="{{ url_for('static', filename='currentsong.js') }}"></script>
 {% endblock %}

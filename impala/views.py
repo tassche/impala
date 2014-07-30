@@ -15,15 +15,16 @@ def mpdclient(func):
     def wrapper(*args, **kwargs):
         try:
             g.client = MPDClient()
-            g.client.connect(session['server'], session['port'])
-            if session['password']:
-                g.client.password(session['password'])
+            try:
+                g.client.connect(session['server'], session['port'])
+                if session['password']:
+                    g.client.password(session['password'])
+            except KeyError:
+                logger.error('invalid session: not connected')
+                raise Unauthorized(description='Not connected to MPD.')
             response = func(*args, **kwargs)
             g.client.close()
             g.client.disconnect()
-        except KeyError:
-            logger.error('invalid session: not connected')
-            raise Unauthorized(description='Not connected to MPD.')
         except (mpd.ConnectionError, OSError) as e:
             logger.error(e)
             raise BadGateway(description=str(e))

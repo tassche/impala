@@ -21,6 +21,12 @@ $(document).ready(function() {
             success: function(time) {
                 $('#time-elapsed').text(time.elapsed);
                 $('#time-total').text(time.total);
+            },
+            error: function() {
+                $('#time-elapsed').text('');
+                $('#time-total').text('');
+            },
+            complete: function() {
                 setTimeout(get_currentsong_time, 500);
             },
         });
@@ -33,6 +39,13 @@ $(document).ready(function() {
                 $('#currentsong-artist').text(currentsong.artist);
                 $('#currentsong-title').text(currentsong.title);
                 $('#currentsong-album').text(currentsong.album);
+            },
+            error: function() {
+                $('#currentsong-artist').text('');
+                $('#currentsong-title').text('');
+                $('#currentsong-album').text('');
+            },
+            complete: function() {
                 setTimeout(get_currentsong, 500);
             },
         });

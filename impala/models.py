@@ -11,6 +11,6 @@ class MPDClient(mpd.MPDClient):
         try:
             e, t = self.status()['time'].split(':')
         except KeyError:
-            e, t = 0, self.currentsong()['time']
+            return dict()
         return {'elapsed': seconds_to_str(int(e)),
                 'total': seconds_to_str(int(t))}

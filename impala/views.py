@@ -2,7 +2,7 @@ from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask import g, session, Response
 from functools import wraps
 from impala.models import MPDClient
-from impala import app
+from impala import app, poller
 from werkzeug.exceptions import BadGateway, BadRequest, Unauthorized
 import json
 import logging
@@ -126,3 +126,11 @@ def mpd_command(command):
         return Response(json.dumps(result, sort_keys=True, indent=2),
                         mimetype='application/json')
     return jsonify(result) if result is not None else 'OK'
+
+@app.route('/poller/<command>')
+def mpd_poller(command):
+    if command not in ('currentsong', 'pretty_currentsong_time', 'status'):
+        raise BadRequest(description='Command not supported.')
+    result = getattr(poller, command)
+    return jsonify(result)
+

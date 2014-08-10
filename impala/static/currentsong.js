@@ -16,7 +16,7 @@ $(document).ready(function() {
     });
     (function get_currentsong_time() {
         $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/pretty_currentsong_time',
+            url: $SCRIPT_ROOT + '/poller/pretty_currentsong_time',
             dataType: 'json',
             success: function(time) {
                 $('#time-elapsed').text(time.elapsed);
@@ -33,7 +33,7 @@ $(document).ready(function() {
     })();
     (function get_currentsong() {
         $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/currentsong',
+            url: $SCRIPT_ROOT + '/poller/currentsong',
             dataType: 'json',
             success: function(currentsong) {
                 $('#currentsong-artist').text(currentsong.artist);

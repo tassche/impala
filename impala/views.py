@@ -15,13 +15,9 @@ def mpdclient(func):
     def wrapper(*args, **kwargs):
         try:
             g.client = MPDClient()
-            try:
-                g.client.connect(session['server'], session['port'])
-                if session['password']:
-                    g.client.password(session['password'])
-            except KeyError:
-                logger.error('invalid session: not connected')
-                raise Unauthorized(description='Not connected to MPD.')
+            g.client.connect(app.config['MPD_HOST'], app.config['MPD_PORT'])
+            if app.config['MPD_PASSWORD']:
+                g.client.password(app.config['MPD_PASSWORD'])
             response = func(*args, **kwargs)
             g.client.close()
             g.client.disconnect()
@@ -41,9 +37,9 @@ def redirect_on_error(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except (BadGateway, Unauthorized) as e:
+        except BadGateway as e:
             logger.error(e)
-            return redirect(url_for('disconnect'))
+            return 'Error: %s' % e
     return wrapper
 
 @app.route('/connect', methods=['GET', 'POST'])

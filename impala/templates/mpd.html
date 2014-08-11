@@ -21,8 +21,8 @@
         <h1>MPD Status</h1>
         <table>
             <tr><th colspan=2 align=left>connection</th></tr>
-            <tr><td class=key>server</td><td>{{ session['server'] }}</td></tr>
-            <tr><td class=key>port</td><td>{{ session['port'] }}</td></tr>
+            <tr><td class=key>server</td><td>{{ config['MPD_HOST'] }}</td></tr>
+            <tr><td class=key>port</td><td>{{ config['MPD_PORT'] }}</td></tr>
         </table>
         <table>
             <tr><th colspan=2 align=left>currentsong</th></tr>

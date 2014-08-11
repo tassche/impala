@@ -28,12 +28,15 @@ class MPDPoller(Thread):
         super(MPDPoller, self).__init__()
         self._host, self._port = host, port
         self._password = password
+
+    def _init_results(self):
         self.currentsong = None
         self.pretty_currentsong_time = None
         self.status = None
 
     def run(self):
         logger.info('poller started')
+        self._init_results()
         self._polling = True
         self._connect()
         while(self._polling):
@@ -41,6 +44,7 @@ class MPDPoller(Thread):
                 self._poll()
             except (OSError, mpd.MPDError) as e:
                 logger.error('polling failed: %s' % e)
+                self._init_results()
                 if not self._close():
                     sleep(15)
                 if not self._connect():

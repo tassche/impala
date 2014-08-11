@@ -46,11 +46,7 @@ def redirect_on_error(func):
 @redirect_on_error
 @mpdclient
 def main():
-    data = {
-        'status': g.client.status(),
-        'currentsong': g.client.currentsong(),
-    }
-    return render_template('currentsong.html', **data)
+    return render_template('currentsong.html')
 
 @app.route('/status')
 @mpdclient

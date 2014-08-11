@@ -26,7 +26,6 @@ class MPDClient(mpd.MPDClient):
 class MPDPoller(Thread):
     def __init__(self, host, port=6600, password=''):
         super(MPDPoller, self).__init__()
-        self._client = MPDClient()
         self._host, self._port = host, port
         self._password = password
         self.currentsong = None
@@ -36,15 +35,43 @@ class MPDPoller(Thread):
     def run(self):
         logger.info('poller started')
         self._polling = True
-        self._client.connect(self._host, self._port)
-        if self._password:
-            self._client.password(self._password)
+        self._connect()
         while(self._polling):
-            self._poll()
+            try:
+                self._poll()
+            except (OSError, mpd.MPDError) as e:
+                logger.error('polling failed: %s' % e)
+                if not self._close():
+                    sleep(15)
+                if not self._connect():
+                    sleep(15)
             sleep(0.2)
-        self._client.close()
-        self._client.disconnect()
+        self._close()
         logger.info('poller stopped')
+
+    def _connect(self):
+        try:
+            self._client = MPDClient()
+            self._client.connect(self._host, self._port)
+            if self._password:
+                try:
+                    self._client.password(self._password)
+                except mpd.CommandError as e:
+                    logger.error('command error: %s' % e)
+                    return False
+        except (OSError, mpd.MPDError) as e:
+            logger.debug('connecting failed: %s' % e)
+            return False
+        return True
+
+    def _close(self):
+        try:
+            self._client.close()
+            self._client.disconnect()
+        except (OSError, mpd.MPDError) as e:
+            logger.debug('disconnecting failed: %s' % e)
+            return False
+        return True
 
     def _poll(self):
         self._client.ping()

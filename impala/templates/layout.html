@@ -11,10 +11,6 @@
 {% endfor %}
 <div class=page>
     {% block body %}
-    <div class=status>
-        Connected to {{ session['server'] }}. 
-        <a href="{{ url_for('disconnect') }}">Disconnect</a>
-    </div>
     {% endblock %}
 </div>
 {% block script %}

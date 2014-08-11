@@ -42,42 +42,6 @@ def redirect_on_error(func):
             return 'Error: %s' % e
     return wrapper
 
-@app.route('/connect', methods=['GET', 'POST'])
-def connect():
-    if request.method == 'GET':
-        if {'server', 'port', 'password'}.issubset(session.keys()) \
-            and bool(session['server']):
-            return redirect(url_for('main'))
-        else:
-            return render_template('connect.html')
-    else:
-        try:
-            g.client = MPDClient()
-            g.client.connect(request.form['server'], 6600)
-            if request.form['password']:
-                g.client.password(request.form['password'])
-            g.client.close()
-            g.client.disconnect()
-            session['server'] = request.form['server']
-            session['port'] = 6600
-            session['password'] = request.form['password']
-        except (mpd.ConnectionError, OSError) as e:
-            logger.error(e)
-            flash(str(e))
-            return render_template('connect.html')
-        except mpd.CommandError as e:
-            logger.error(e)
-            flash(str(e))
-            g.client.close()
-            g.client.disconnect()
-            return render_template('connect.html')
-        return redirect(url_for('main'))
-
-@app.route('/disconnect')
-def disconnect():
-    session.clear()
-    return redirect(url_for('connect'))
-
 @app.route('/')
 @redirect_on_error
 @mpdclient

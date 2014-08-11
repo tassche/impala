@@ -38,8 +38,8 @@ def redirect_on_error(func):
         try:
             return func(*args, **kwargs)
         except BadGateway as e:
-            logger.error(e)
-            return 'Error: %s' % e
+            logger.error(e.description)
+            return 'Error: %s' % e.description
     return wrapper
 
 @app.route('/')
@@ -87,6 +87,8 @@ def mpd_command(command):
 def mpd_poller(command):
     if command not in ('currentsong', 'pretty_currentsong_time', 'status'):
         raise BadRequest(description='Command not supported.')
-    result = getattr(poller, command)
-    return jsonify(result)
+    try:
+        return jsonify(getattr(poller, command))
+    except TypeError as e:
+        raise BadGateway(description='Invalid MPD response.')
 

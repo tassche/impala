@@ -1,9 +1,9 @@
-from flask import flash, jsonify, redirect, render_template, request, url_for
-from flask import g, session, Response
+from flask import flash, jsonify, render_template, request, url_for
+from flask import g, Response
 from functools import wraps
 from impala.models import MPDClient
 from impala import app, poller
-from werkzeug.exceptions import BadGateway, BadRequest, Unauthorized
+from werkzeug.exceptions import BadGateway, BadRequest
 import json
 import logging
 import mpd

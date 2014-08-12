@@ -3,7 +3,6 @@ from threading import Thread
 from time import sleep
 import mpd
 import logging
-import sys
 
 logger = logging.getLogger(__name__)
 

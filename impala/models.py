@@ -5,7 +5,7 @@ import mpd
 import logging
 import sys
 
-logger = logging.getLogger('impala')
+logger = logging.getLogger(__name__)
 
 
 class MPDClient(mpd.MPDClient):
@@ -35,11 +35,11 @@ class MPDPoller(Thread):
         self.status = None
 
     def run(self):
-        logger.info('poller started')
         self._init_results()
         self._polling = True
         self._connect()
         while(self._polling):
+            logger.debug('polling %s' % self._host)
             try:
                 self._poll()
             except (OSError, mpd.MPDError) as e:
@@ -51,7 +51,6 @@ class MPDPoller(Thread):
                     sleep(15)
             sleep(0.2)
         self._close()
-        logger.info('poller stopped')
 
     def _connect(self):
         try:

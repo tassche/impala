@@ -1,4 +1,5 @@
 DEBUG = False
+DEBUG_MPD = False
 SECRET_KEY = 'your secret key here'
 
 MPD_HOST = 'localhost'

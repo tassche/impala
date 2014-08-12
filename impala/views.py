@@ -8,7 +8,7 @@ import json
 import logging
 import mpd
 
-logger = logging.getLogger('impala')
+logger = logging.getLogger(__name__)
 
 def mpdclient(func):
     @wraps(func)

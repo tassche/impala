@@ -38,6 +38,7 @@ $(document).ready(function() {
                 $('#currentsong-artist').text(currentsong.artist);
                 $('#currentsong-title').text(currentsong.title);
                 $('#currentsong-album').text(currentsong.album);
+                $('#currentsong-date').text(currentsong.date);
                 setTimeout(get_currentsong, 500);
             },
             error: function() {
@@ -45,6 +46,25 @@ $(document).ready(function() {
                 $('#currentsong-title').text('');
                 $('#currentsong-album').text('');
                 setTimeout(get_currentsong, 5000);
+            },
+        });
+    })();
+    (function get_status() {
+        $.ajax({
+            url: $SCRIPT_ROOT + '/poller/status',
+            dataType: 'json',
+            success: function(status) {
+                $('#status-bitrate').text(status.bitrate);
+                var time = status.time.split(':');
+                var progress = time[0] / time[1] * 100;
+                $('.progress-bar').css('width', progress+'%')
+                    .attr('aria-valuenow', time[0])
+                    .attr('aria-valuemax', time[1]);
+                setTimeout(get_status, 500);
+            },
+            error: function() {
+                $('#status-bitrate').text('');
+                setTimeout(get_status, 5000);
             },
         });
     })();

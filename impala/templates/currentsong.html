@@ -1,23 +1,33 @@
 {% extends "layout.html" %}
 {% block body %}
 {{ super() }}
-    <div class=currentsong>
-        <p>
-            <span id=currentsong-artist></span> -
-            <span id=currentsong-title></span> -
-            <span id=currentsong-album></span>
-        </p>
-        <p><span id=time-elapsed></span> / <span id=time-total></span></p>
+<div class="jumbotron">
+    <div class="container">
+        <h3><span id=currentsong-artist></span></h3>
+        <h2><span id=currentsong-title></span></h2>
+        <h3><span id=currentsong-album></span> <small><span id="currentsong-date"></span></small></h3>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
+        </div>
+        <ul class="list-inline text-right">
+            <li><p><small><span id="status-bitrate"></span> kbps</small></p></li>
+            <li><p><small><span id="time-elapsed"></span> / <span id="time-total"></span></small></p></li>
+        </ul>
     </div>
-    <div class=controls>
-        <button id=play type=button>Play</button>
-        <button id=pause type=button>Pause</button>
-        <button id=stop type=button>Stop</button>
-        <button id=previous type=button>Previous</button>
-        <button id=next type=button>Next</button>
+</div>
+<div class="container">
+    <div class="btn-group">
+        <button class="btn btn-default" type="button" id="play"><span class="glyphicon glyphicon-play"></span></button>
+        <button class="btn btn-default" type="button" id="pause"><span class="glyphicon glyphicon-pause"></button>
+        <button class="btn btn-default" type="button" id="stop"><span class="glyphicon glyphicon-stop"></button>
     </div>
+    <div class="btn-group">
+        <button class="btn btn-default" type="button" id="previous"><span class="glyphicon glyphicon-fast-backward"></button>
+        <button class="btn btn-default" type="button" id="next"><span class="glyphicon glyphicon-fast-forward"></button>
+    </div>
+</div>
 {% endblock %}
 {% block script %}
 {{ super() }}
-<script src="{{ url_for('static', filename='currentsong.js') }}"></script>
+<script src="{{ url_for('static', filename='js/currentsong.js') }}"></script>
 {% endblock %}

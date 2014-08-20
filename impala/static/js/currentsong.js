@@ -1,8 +1,10 @@
 var playlist; // playlist version
 
 function populate_playlist(playlistinfo) {
+    $('#playlist tbody tr').remove();
     $.each(playlistinfo, function(i, song) {
         $('<tr>').append(
+            $('<td class="pl_pos">').text(song.pos),
             $('<td>').text(song.track),
             $('<td>').text(song.title),
             $('<td>').text(song.artist),
@@ -10,6 +12,11 @@ function populate_playlist(playlistinfo) {
             $('<td>').text(song.date),
             $('<td>').text(song.time)
         ).appendTo('#playlist');
+    });
+    $('#playlist tbody tr td.pl_pos').hide();
+    $('#playlist tbody tr').click(function(event) {
+        var pos = $(this).find('td.pl_pos').text();
+        $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
     });
 }
 

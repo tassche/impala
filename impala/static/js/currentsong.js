@@ -1,3 +1,26 @@
+var playlist; // playlist version
+
+function populate_playlist(playlistinfo) {
+    $.each(playlistinfo, function(i, song) {
+        $('<tr>').append(
+            $('<td>').text(song.track),
+            $('<td>').text(song.title),
+            $('<td>').text(song.artist),
+            $('<td>').text(song.album),
+            $('<td>').text(song.date),
+            $('<td>').text(song.time)
+        ).appendTo('#playlist');
+    });
+}
+
+function resize_playlist() {
+    var height = (
+        $(window).height() - ($('div.jumbotron.currentsong').outerHeight(true)
+                              + $('div.controls').outerHeight(true))
+    );
+    $('div.playlist').css('height', height);
+}
+
 $(document).ready(function() {
     $('#play').click(function(event) {
         $.get($SCRIPT_ROOT + '/mpd/play');
@@ -47,6 +70,7 @@ $(document).ready(function() {
                 $('#currentsong-album').text('');
                 setTimeout(get_currentsong, 5000);
             },
+            complete: resize_playlist
         });
     })();
     (function get_status() {
@@ -60,6 +84,16 @@ $(document).ready(function() {
                 $('.progress-bar').css('width', progress+'%')
                     .attr('aria-valuenow', time[0])
                     .attr('aria-valuemax', time[1]);
+                if (status.playlist != playlist) {
+                    $.ajax({
+                        url: $SCRIPT_ROOT + '/mpd/playlistinfo',
+                        dataType: 'json',
+                        success: function(playlistinfo) {
+                            populate_playlist(playlistinfo);
+                            playlist = status.playlist;
+                        }
+                    });
+                }
                 setTimeout(get_status, 500);
             },
             error: function() {
@@ -68,4 +102,7 @@ $(document).ready(function() {
             },
         });
     })();
+    $(window).resize(function() {
+        resize_playlist();
+    });
 });

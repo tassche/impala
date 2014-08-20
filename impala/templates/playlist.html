@@ -1,0 +1,19 @@
+{% extends "currentsong.html" %}
+{% block body %}
+{{ super() }}
+<div class="container playlist">
+    <table id="playlist" class="table table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Date</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+{% endblock %}

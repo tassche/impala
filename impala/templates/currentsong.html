@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
 {{ super() }}
-<div class="jumbotron">
-    <div class="container">
+<div class="jumbotron currentsong">
+    <div class="container currentsong">
         <h3><span id=currentsong-artist></span></h3>
         <h2><span id=currentsong-title></span></h2>
         <h3><span id=currentsong-album></span> <small><span id="currentsong-date"></span></small></h3>
@@ -15,7 +15,7 @@
         </ul>
     </div>
 </div>
-<div class="container">
+<div class="container controls">
     <div class="btn-group">
         <button class="btn btn-default" type="button" id="play"><span class="glyphicon glyphicon-play"></span></button>
         <button class="btn btn-default" type="button" id="pause"><span class="glyphicon glyphicon-pause"></button>

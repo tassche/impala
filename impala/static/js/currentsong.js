@@ -1,5 +1,10 @@
 var playlist; // playlist version
 
+$('#playlist thead tr th.pl_rm').click(function(event) {
+    event.stopPropagation();
+    $.get($SCRIPT_ROOT + '/mpd/clear');
+});
+
 function populate_playlist(playlistinfo) {
     $('#playlist tbody tr').remove();
     $.each(playlistinfo, function(i, song) {
@@ -10,13 +15,21 @@ function populate_playlist(playlistinfo) {
             $('<td>').text(song.artist),
             $('<td>').text(song.album),
             $('<td>').text(song.date),
-            $('<td>').text(song.time)
+            $('<td>').text(song.time),
+            $('<td class="pl_rm">').html(
+                '<span class="glyphicon glyphicon-remove"></span>'
+            )
         ).appendTo('#playlist');
     });
     $('#playlist tbody tr td.pl_pos').hide();
     $('#playlist tbody tr').click(function(event) {
         var pos = $(this).find('td.pl_pos').text();
         $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
+    });
+    $('#playlist tbody tr td.pl_rm').click(function(event) {
+        event.stopPropagation();
+        var pos = $(this).closest('tr').find('td.pl_pos').text();
+        $.get($SCRIPT_ROOT + '/mpd/delete?' + pos);
     });
 }
 

@@ -65,12 +65,27 @@ function resize_playlist() {
 
 
 function on_poll_status_success(status) {
-    $('#status-bitrate').text(status.bitrate);
-    var time = status.time.split(':');
-    var progress = time[0] / time[1] * 100;
-    $('.progress-bar').css('width', progress+'%')
-        .attr('aria-valuenow', time[0])
-        .attr('aria-valuemax', time[1]);
+    if (status.state != 'stop') {
+        $('#status-bitrate').text(status.bitrate);
+        var time = status.time.split(':');
+        var progress = time[0] / time[1] * 100;
+        $('.progress-bar').css('width', progress+'%')
+            .attr('aria-valuenow', time[0])
+            .attr('aria-valuemax', time[1]);
+    } else {
+        $('#currentsong-artist').text('');
+        $('#currentsong-title').text('Impala');
+        $('#currentsong-album').text('');
+        $('#currentsong-date').text('');
+
+        $('#time-elapsed').text('00:00');
+        $('#time-total').text('00:00');
+
+        $('#status-bitrate').text('0');
+        $('.progress-bar').css('width', 0)
+            .attr('aria-valuenow', 0)
+            .attr('aria-valuemax', 0);
+    }
     if (status.playlist != playlist) {
         $.ajax({
             url: $SCRIPT_ROOT + '/mpd/playlistinfo',

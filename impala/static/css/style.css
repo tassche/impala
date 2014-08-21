@@ -17,3 +17,8 @@
 .container.playlist {
   overflow: auto;
 }
+#playlist tbody tr,
+#playlist th.pl_rm,
+#playlist td.pl_rm {
+  cursor: pointer;
+}

@@ -163,7 +163,5 @@ $(document).ready(function() {
             }
         });
     })();
-    $(window).resize(function() {
-        resize_playlist();
-    });
+    $(window).resize(resize_playlist);
 });

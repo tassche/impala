@@ -1,12 +1,32 @@
+function bind_playback_controls() {
+    var elements = [
+        ['#play', '/mpd/play'],
+        ['#pause', '/mpd/pause?1'],
+        ['#stop', '/mpd/stop'],
+        ['#previous', '/mpd/previous'],
+        ['#next', '/mpd/next']
+    ];
+    $.each(elements, function(i, element) {
+        $(element[0]).click(function(event) {
+            $.get($SCRIPT_ROOT + element[1]);
+        });
+    });
+}
+
+
 var playlist; // playlist version
 
-$('#playlist thead tr th.pl_rm').click(function(event) {
-    event.stopPropagation();
-    $.get($SCRIPT_ROOT + '/mpd/clear');
-});
+function bind_clear_playlist() {
+    $('#playlist thead tr th.pl_rm').click(function(event) {
+        event.stopPropagation();
+        $.get($SCRIPT_ROOT + '/mpd/clear');
+    });
+}
 
 function populate_playlist(playlistinfo) {
+    // clear existing playlist
     $('#playlist tbody tr').remove();
+    // populate playlist
     $.each(playlistinfo, function(i, song) {
         $('<tr>').append(
             $('<td class="pl_pos">').text(song.pos),
@@ -21,7 +41,9 @@ function populate_playlist(playlistinfo) {
             )
         ).appendTo('#playlist');
     });
+    // hide the pos column
     $('#playlist tbody tr td.pl_pos').hide();
+    // bind play and delete handlers
     $('#playlist tbody tr').click(function(event) {
         var pos = $(this).find('td.pl_pos').text();
         $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
@@ -41,22 +63,11 @@ function resize_playlist() {
     $('div.playlist').css('height', height);
 }
 
+
 $(document).ready(function() {
-    $('#play').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/play');
-    });
-    $('#pause').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/pause?1');
-    });
-    $('#stop').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/stop');
-    });
-    $('#previous').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/previous');
-    });
-    $('#next').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/next');
-    });
+    bind_playback_controls();
+    bind_clear_playlist();
+
     (function get_currentsong_time() {
         $.ajax({
             url: $SCRIPT_ROOT + '/poller/pretty_currentsong_time',
@@ -70,7 +81,7 @@ $(document).ready(function() {
                 $('#time-elapsed').text('');
                 $('#time-total').text('');
                 setTimeout(get_currentsong_time, 5000);
-            },
+            }
         });
     })();
     (function get_currentsong() {
@@ -119,7 +130,7 @@ $(document).ready(function() {
             error: function() {
                 $('#status-bitrate').text('');
                 setTimeout(get_status, 5000);
-            },
+            }
         });
     })();
     $(window).resize(function() {

@@ -64,95 +64,99 @@ function resize_playlist() {
 }
 
 
-function on_poll_status_success(status) {
-    if (status.state != 'stop') {
-        $('#status-bitrate').text(status.bitrate);
-        var time = status.time.split(':');
-        var progress = time[0] / time[1] * 100;
-        $('.progress-bar').css('width', progress+'%')
-            .attr('aria-valuenow', time[0])
-            .attr('aria-valuemax', time[1]);
-        $('#time-elapsed').text(seconds_to_str(time[0]));
-        $('#time-total').text(seconds_to_str(time[1]));
-    } else {
-        $('#currentsong-artist').text('');
-        $('#currentsong-title').text('Impala');
-        $('#currentsong-album').text('');
-        $('#currentsong-date').text('');
+function on_state_play(mpd_status) {
+    $('#status-bitrate').text(mpd_status.bitrate);
 
-        $('#time-elapsed').text('00:00');
-        $('#time-total').text('00:00');
+    var time = mpd_status.time.split(':');
+    $('#time-elapsed').text(seconds_to_str(time[0]));
+    $('#time-total').text(seconds_to_str(time[1]));
 
-        $('#status-bitrate').text('0');
-        $('.progress-bar').css('width', 0)
-            .attr('aria-valuenow', 0)
-            .attr('aria-valuemax', 0);
-    }
-    if (status.playlist != playlist) {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/playlistinfo',
-            dataType: 'json',
-            success: function(playlistinfo) {
-                populate_playlist(playlistinfo);
-                playlist = status.playlist;
-            }
-        });
-    }
+    var progress = time[0] / time[1] * 100;
+    $('.progress-bar').css('width', progress+'%')
+        .attr('aria-valuenow', time[0])
+        .attr('aria-valuemax', time[1]);
 }
 
-function on_poll_status_error() {
-    $('#status-bitrate').text('');
-}
-
-function poll_status() {
-    var timeout;
-    $.ajax({
-        url: $SCRIPT_ROOT + '/poller/status',
-        dataType: 'json',
-        success: function(status) {
-            on_poll_status_success(status);
-            timeout = 500;
-        },
-        error: function() {
-            on_poll_status_error();
-            timeout = 5000;
-        },
-        complete: function() {
-            setTimeout(poll_status, timeout);
-        }
-    });
-}
-
-function on_poll_currentsong_success(currentsong) {
-    $('#currentsong-artist').text(currentsong.artist);
-    $('#currentsong-title').text(currentsong.title);
-    $('#currentsong-album').text(currentsong.album);
-    $('#currentsong-date').text(currentsong.date);
-}
-
-function on_poll_currentsong_error() {
+function on_state_stop() {
     $('#currentsong-artist').text('');
-    $('#currentsong-title').text('');
+    $('#currentsong-title').text('Impala');
     $('#currentsong-album').text('');
     $('#currentsong-date').text('');
+
+    $('#status-bitrate').text('0');
+
+    $('#time-elapsed').text('00:00');
+    $('#time-total').text('00:00');
+
+    $('.progress-bar').css('width', 0)
+        .attr('aria-valuenow', 0)
+        .attr('aria-valuemax', 0);
 }
 
-function poll_currentsong() {
-    var timeout;
+
+function update_currentsong() {
     $.ajax({
         url: $SCRIPT_ROOT + '/poller/currentsong',
         dataType: 'json',
         success: function(currentsong) {
-            on_poll_currentsong_success(currentsong);
+            $('#currentsong-artist').text(currentsong.artist);
+            $('#currentsong-title').text(currentsong.title);
+            $('#currentsong-album').text(currentsong.album);
+            $('#currentsong-date').text(currentsong.date);
+        },
+        error: function() {
+            $('#currentsong-artist').text('');
+            $('#currentsong-title').text('');
+            $('#currentsong-album').text('');
+            $('#currentsong-date').text('');
+        },
+        complete: resize_playlist
+    });
+}
+
+function update_playlist(version) {
+    $.ajax({
+        url: $SCRIPT_ROOT + '/mpd/playlistinfo',
+        dataType: 'json',
+        success: function(playlistinfo) {
+            populate_playlist(playlistinfo);
+            playlist = version;
+        }
+    });
+}
+
+
+function on_poll_success(mpd_status) {
+    if (mpd_status.state != 'stop') {
+        update_currentsong();
+        on_state_play(mpd_status);
+    } else {
+        on_state_stop();
+    }
+    if (mpd_status.playlist != playlist) {
+        update_playlist(mpd_status.playlist);
+    }
+}
+
+function on_poll_error() {
+    on_state_stop();
+}
+
+function poll() {
+    var timeout;
+    $.ajax({
+        url: $SCRIPT_ROOT + '/poller/status',
+        dataType: 'json',
+        success: function(mpd_status) {
+            on_poll_success(mpd_status);
             timeout = 500;
         },
         error: function() {
-            on_poll_currentsong_error();
+            on_poll_error();
             timeout = 5000;
         },
         complete: function() {
-            resize_playlist();
-            setTimeout(poll_currentsong, timeout);
+            setTimeout(poll, timeout);
         }
     });
 }
@@ -161,11 +165,10 @@ function poll_currentsong() {
 $(document).ready(function() {
     bind_playback_controls();
     bind_clear_playlist();
-
-    poll_status();
-    poll_currentsong();
+    poll();
     $(window).resize(resize_playlist);
 });
+
 
 // helpers
 function seconds_to_dhms(seconds) {

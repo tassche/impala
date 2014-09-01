@@ -1,25 +1,9 @@
-from impala.utils import seconds_to_str
 from threading import Thread
 from time import sleep
 import mpd
 import logging
 
 logger = logging.getLogger(__name__)
-
-
-class MPDClient(mpd.MPDClient):
-    def pretty_currentsong_time(self):
-        '''The elapsed and total time of the current playing song.
-
-        A dict with the elapsed time and the total time of the current
-        playing song, nicely formatted.
-        '''
-        try:
-            e, t = self.status()['time'].split(':')
-        except KeyError:
-            return dict()
-        return {'elapsed': seconds_to_str(int(e)),
-                'total': seconds_to_str(int(t))}
 
 
 class MPDPoller(Thread):
@@ -30,7 +14,6 @@ class MPDPoller(Thread):
 
     def _init_results(self):
         self.currentsong = None
-        self.pretty_currentsong_time = None
         self.status = None
 
     def run(self):
@@ -53,7 +36,7 @@ class MPDPoller(Thread):
 
     def _connect(self):
         try:
-            self._client = MPDClient()
+            self._client = mpd.MPDClient()
             self._client.connect(self._host, self._port)
             if self._password:
                 try:
@@ -78,7 +61,6 @@ class MPDPoller(Thread):
     def _poll(self):
         self._client.ping()
         self.currentsong = self._client.currentsong()
-        self.pretty_currentsong_time = self._client.pretty_currentsong_time()
         self.status = self._client.status()
 
     def stop(self):

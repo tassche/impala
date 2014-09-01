@@ -1,7 +1,6 @@
 from flask import flash, jsonify, render_template, request, url_for
 from flask import g, Response
 from functools import wraps
-from impala.models import MPDClient
 from impala import app, poller
 from werkzeug.exceptions import BadGateway, BadRequest
 import json
@@ -14,7 +13,7 @@ def mpdclient(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            g.client = MPDClient()
+            g.client = mpd.MPDClient()
             g.client.connect(app.config['MPD_HOST'], app.config['MPD_PORT'])
             if app.config['MPD_PASSWORD']:
                 g.client.password(app.config['MPD_PASSWORD'])
@@ -85,7 +84,7 @@ def mpd_command(command):
 
 @app.route('/poller/<command>')
 def mpd_poller(command):
-    if command not in ('currentsong', 'pretty_currentsong_time', 'status'):
+    if command not in ('currentsong', 'status'):
         raise BadRequest(description='Command not supported.')
     try:
         return jsonify(getattr(poller, command))

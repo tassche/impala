@@ -72,6 +72,8 @@ function on_poll_status_success(status) {
         $('.progress-bar').css('width', progress+'%')
             .attr('aria-valuenow', time[0])
             .attr('aria-valuemax', time[1]);
+        $('#time-elapsed').text(seconds_to_str(time[0]));
+        $('#time-total').text(seconds_to_str(time[1]));
     } else {
         $('#currentsong-artist').text('');
         $('#currentsong-title').text('Impala');
@@ -162,21 +164,26 @@ $(document).ready(function() {
 
     poll_status();
     poll_currentsong();
-    (function get_currentsong_time() {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/poller/pretty_currentsong_time',
-            dataType: 'json',
-            success: function(time) {
-                $('#time-elapsed').text(time.elapsed);
-                $('#time-total').text(time.total);
-                setTimeout(get_currentsong_time, 500);
-            },
-            error: function() {
-                $('#time-elapsed').text('');
-                $('#time-total').text('');
-                setTimeout(get_currentsong_time, 5000);
-            }
-        });
-    })();
     $(window).resize(resize_playlist);
 });
+
+// helpers
+function seconds_to_dhms(seconds) {
+    var m = parseInt(seconds/60), s = seconds%60;
+    var h = parseInt(m/60); m = m%60;
+    var d = parseInt(h/24); h = h%24;
+    return [d, h, m, s];
+}
+
+function seconds_to_str(seconds) {
+    var dhms = seconds_to_dhms(seconds);
+    var d = dhms[0], h = dhms[1], m = dhms[2], s = dhms[3];
+    var str = ((m > 9) ? m : '0' + m) + ':' + ((s > 9) ? s : '0' + s);
+    if (h > 0) {
+        str = ((h > 9) ? h : '0' + h) + ':' + str;
+    }
+    if (d > 0) {
+        str = d.toString() + 'd ' + str;
+    }
+    return str;
+}

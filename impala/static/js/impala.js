@@ -72,7 +72,7 @@ function on_state_play(mpd_status) {
     $('#time-total').text(seconds_to_str(time[1]));
 
     var progress = time[0] / time[1] * 100;
-    $('.progress-bar').css('width', progress+'%')
+    $('#time-progress').css('width', progress+'%')
         .attr('aria-valuenow', time[0])
         .attr('aria-valuemax', time[1]);
 }
@@ -88,7 +88,7 @@ function on_state_stop() {
     $('#time-elapsed').text('00:00');
     $('#time-total').text('00:00');
 
-    $('.progress-bar').css('width', 0)
+    $('#time-progress').css('width', 0)
         .attr('aria-valuenow', 0)
         .attr('aria-valuemax', 0);
 }

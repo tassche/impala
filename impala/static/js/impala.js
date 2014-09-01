@@ -35,7 +35,7 @@ function populate_playlist(playlistinfo) {
             $('<td>').text(song.artist),
             $('<td>').text(song.album),
             $('<td>').text(song.date),
-            $('<td>').text(song.time),
+            $('<td>').text(seconds_to_str(song.time)),
             $('<td class="pl_rm">').html(
                 '<span class="glyphicon glyphicon-remove"></span>'
             )

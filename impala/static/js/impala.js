@@ -1,3 +1,8 @@
+var volume;
+var volume_off = 0; // allows to toggle mute
+var playlist; // playlist version
+
+
 function bind_playback_controls() {
     var elements = [
         ['#play', '/mpd/play'],
@@ -29,16 +34,13 @@ function bind_volume_controls() {
     });
 }
 
-var volume;
-var volume_off = 0; // allows to toggle mute
-var playlist; // playlist version
-
 function bind_clear_playlist() {
     $('#playlist thead tr th.pl_rm').click(function(event) {
         event.stopPropagation();
         $.get($SCRIPT_ROOT + '/mpd/clear');
     });
 }
+
 
 function populate_playlist(playlistinfo) {
     // clear existing playlist

@@ -13,7 +13,24 @@ function bind_playback_controls() {
     });
 }
 
+function bind_volume_controls() {
+    $('#volume-down').click(function(event) {
+        var new_volume = (volume < 5) ? 0 : volume-5;
+        $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+    });
+    $('#volume-up').click(function(event) {
+        var new_volume = (volume > 95) ? 100 : volume+5;
+        $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+    });
+    $('#volume-off').click(function(event) {
+        new_volume = (volume_off > 0) ? volume_off : 0;
+        volume_off = (volume_off > 0) ? 0 : volume;
+        $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+    });
+}
 
+var volume;
+var volume_off = 0; // allows to toggle mute
 var playlist; // playlist version
 
 function bind_clear_playlist() {
@@ -133,6 +150,8 @@ function on_poll_success(mpd_status) {
     } else {
         on_state_stop();
     }
+    volume = parseInt(mpd_status.volume);
+    $('#status-volume').text(volume);
     if (mpd_status.playlist != playlist) {
         update_playlist(mpd_status.playlist);
     }
@@ -164,6 +183,7 @@ function poll() {
 
 $(document).ready(function() {
     bind_playback_controls();
+    bind_volume_controls();
     bind_clear_playlist();
     poll();
     $(window).resize(resize_playlist);

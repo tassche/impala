@@ -87,23 +87,6 @@ function populate_playlist(playlistinfo) {
     });
 }
 
-function resize_playlist() {
-    var height = (
-        $(window).height() - ($('div.jumbotron.currentsong').outerHeight(true)
-                              + $('div.controls').outerHeight(true))
-    );
-    $('div.playlist').css('height', height);
-}
-
-function resize_library() {
-    var height = (
-        $(window).height() - ($('div.jumbotron.currentsong').outerHeight(true)
-                              + $('div.controls').outerHeight(true))
-    );
-    $('div.library').css('height', height);
-    $('div.library > div.col-md-4').css('height', height);
-}
-
 function populate_library_artists(artists) {
     // clear existing artists
     $('#lib-artists tbody tr').remove();
@@ -219,10 +202,7 @@ function update_currentsong() {
             $('#currentsong-album').text('');
             $('#currentsong-date').text('');
         },
-        complete: function() {
-            resize_playlist();
-            resize_library();
-        }
+        complete: resize_components
     });
 }
 
@@ -316,13 +296,23 @@ function poll() {
 }
 
 
+function resize_components() {
+    var height = (
+        $(window).height() - ($('div.jumbotron.currentsong').outerHeight(true)
+                              + $('div.controls').outerHeight(true))
+    );
+    $('div.playlist').css('height', height);
+    $('div.library').css('height', height);
+    $('div.library > div.col-md-4').css('height', height);
+}
+
+
 $(document).ready(function() {
     bind_playback_controls();
     bind_volume_controls();
     bind_clear_playlist();
     poll();
-    $(window).resize(resize_playlist);
-    $(window).resize(resize_library);
+    $(window).resize(resize_components);
     update_library_artists();
 });
 

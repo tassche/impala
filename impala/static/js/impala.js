@@ -149,9 +149,34 @@ function populate_library_songs(songs) {
     // populate song table
     $.each(songs, function(i, song) {
         $('<tr>').append(
-            $('<td>').text(song.track),
-            $('<td>').text(song.title)
+            $('<td class="lib-song-track">').text(song.track),
+            $('<td class="lib-song-title">').text(song.title),
+            $('<td class="lib-song-add">')
+                .html('<span class="glyphicon glyphicon-plus"></span>'),
+            $('<td class="lib-song-play">')
+                .html('<span class="glyphicon glyphicon-play"></span>'),
+            $('<td class="lib-song-file">').text(song.file)
         ).appendTo('#lib-songs');
+    });
+    // hide the file column
+    $('#lib-songs tbody tr td.lib-song-file').hide();
+    // bind add and play handlers
+    $('#lib-songs tbody tr td.lib-song-add').click(function(event) {
+        event.stopPropagation();
+        var file = $(this).closest('tr').find('td.lib-song-file').text();
+        $.get($SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file));
+    });
+    $('#lib-songs tbody tr td.lib-song-play').click(function(event) {
+        event.stopPropagation();
+        var file = $(this).closest('tr').find('td.lib-song-file').text();
+        $.ajax({
+            url: $SCRIPT_ROOT + '/mpd/addid?'+ encodeURIComponent(file),
+            dataType: 'text',
+            success: function(songid) {
+                var songid = encodeURIComponent(songid);
+                $.get($SCRIPT_ROOT + '/mpd/playid?' + songid);
+            }
+        });
     });
 }
 

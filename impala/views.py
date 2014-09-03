@@ -86,7 +86,11 @@ def mpd_command(command):
         # http://flask.pocoo.org/docs/api/#flask.json.jsonify
         return Response(json.dumps(result, sort_keys=True, indent=2),
                         mimetype='application/json')
-    return jsonify(result) if result is not None else 'OK'
+    try:
+        return jsonify(result) if result is not None else 'OK'
+    except ValueError:
+        # result is plain text (eg. addid command)
+        return result
 
 @app.route('/poller/<command>')
 def mpd_poller(command):

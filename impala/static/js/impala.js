@@ -3,6 +3,19 @@ var volume_off = 0; // allows to toggle mute
 var playlist; // playlist version
 
 
+function Album(artist, date, title) {
+    this.artist = (artist instanceof Array) ? artist[0] : artist;
+    this.date = date;
+    this.title = title;
+}
+
+Album.prototype.equals = function(album) {
+    return album !== null && typeof album !== 'undefined'
+        && this.artist == album.artist && this.date == album.date
+        && this.title == album.title;
+};
+
+
 function bind_playback_controls() {
     var elements = [
         ['#play', '/mpd/play'],
@@ -82,6 +95,83 @@ function resize_playlist() {
     $('div.playlist').css('height', height);
 }
 
+function resize_library() {
+    var height = (
+        $(window).height() - ($('div.jumbotron.currentsong').outerHeight(true)
+                              + $('div.controls').outerHeight(true))
+    );
+    $('div.library').css('height', height);
+    $('div.library > div.col-md-4').css('height', height);
+}
+
+function populate_library_artists(artists) {
+    // clear existing artists
+    $('#lib-artists tbody tr').remove();
+    // populate artist table
+    $.each(artists, function(i, artist) {
+        if (artist != '') {
+            $('<tr>').append(
+                $('<td>').html(artist)
+            ).appendTo('#lib-artists');
+        }
+    });
+    // find the first artist with a non empty name and update the albums
+    var i = 0, artist = '';
+    while(artist == '' && i < artists.length) {
+        artist = artists[i];
+        i++;
+    }
+    update_library_albums(artist);
+    // bind click handler
+    $('#lib-artists tbody tr').click(function(event) {
+        update_library_albums($(this).find('td').text());
+    });
+}
+
+function populate_library_albums(albums) {
+    // clear existing albums
+    $('#lib-albums tbody tr').remove();
+    // populate album table
+    $.each(albums, function(i, album) {
+        if (album.title != '') {
+            $('<tr>').append(
+                $('<td class="lib-album-artist">').text(album.artist),
+                $('<td class="lib-album-date">').text(album.date),
+                $('<td class="lib-album-title">').text(album.title)
+            ).appendTo('#lib-albums');
+        }
+    });
+    // hide the artist column
+    $('#lib-albums tbody tr td.lib-album-artist').hide();
+    // find the first album with a non empty title and update the songs
+    var i = 0, album = null;
+    while(album === null && i < albums.length) {
+        if (albums[i].title != '') album = albums[i];
+        i++;
+    }
+    update_library_songs(album);
+    // bind click handler
+    $('#lib-albums tbody tr').click(function(event) {
+        update_library_songs(new Album(
+            $(this).find('td.lib-album-artist').text(),
+            $(this).find('td.lib-album-date').text(),
+            $(this).find('td.lib-album-title').text()
+        ));
+    });
+}
+
+function populate_library_songs(songs) {
+    // clear existing songs
+    $('#lib-songs tbody tr').remove();
+    // populate song table
+    $.each(songs, function(i, song) {
+        $('<tr>').append(
+            $('<td>').text(song.track),
+            $('<td>').text(song.title)
+        ).appendTo('#lib-songs');
+    });
+}
+
 
 function on_state_play(mpd_status) {
     $('#status-bitrate').text(mpd_status.bitrate);
@@ -129,7 +219,10 @@ function update_currentsong() {
             $('#currentsong-album').text('');
             $('#currentsong-date').text('');
         },
-        complete: resize_playlist
+        complete: function() {
+            resize_playlist();
+            resize_library();
+        }
     });
 }
 
@@ -141,6 +234,46 @@ function update_playlist(version) {
             populate_playlist(playlistinfo);
             playlist = version;
         }
+    });
+}
+
+function update_library_artists() {
+    $.ajax({
+        url: $SCRIPT_ROOT + '/mpd/list?albumartist',
+        dataType: 'json',
+        success: populate_library_artists
+    });
+}
+
+function update_library_albums(artist) {
+    $.ajax({
+        url: $SCRIPT_ROOT + '/mpd/find?'
+            + 'albumartist=' + encodeURIComponent(artist),
+        dataType: 'json',
+        success: function(songs) {
+            var albums = [], last_album; // js has no set object
+            for (var i = 0; i < songs.length; i++) {
+                var album = new Album(
+                    songs[i].albumartist, songs[i].date, songs[i].album
+                );
+                if (!album.equals(last_album)) {
+                    albums.push(album);
+                    last_album = album;
+                }
+            }
+            populate_library_albums(albums);
+        }
+    });
+}
+
+function update_library_songs(album) {
+    $.ajax({
+        url: $SCRIPT_ROOT + '/mpd/find?'
+            + 'albumartist=' + encodeURIComponent(album.artist)
+            + '&album=' + encodeURIComponent(album.title)
+            + '&date=' + encodeURIComponent(album.date),
+        dataType: 'json',
+        success: populate_library_songs
     });
 }
 
@@ -189,6 +322,8 @@ $(document).ready(function() {
     bind_clear_playlist();
     poll();
     $(window).resize(resize_playlist);
+    $(window).resize(resize_library);
+    update_library_artists();
 });
 
 

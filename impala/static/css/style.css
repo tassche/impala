@@ -14,11 +14,15 @@
 .container.controls {
   margin-bottom: 6px;
 }
-.container.playlist {
+.container.playlist,
+.container.library > .col-md-4 {
   overflow: auto;
 }
 #playlist tbody tr,
 #playlist th.pl_rm,
-#playlist td.pl_rm {
+#playlist td.pl_rm,
+#lib-artists tbody tr,
+#lib-albums tbody tr,
+#lib-songs tbody tr {
   cursor: pointer;
 }

@@ -94,7 +94,11 @@ function populate_library_artists(artists) {
     $.each(artists, function(i, artist) {
         if (artist != '') {
             $('<tr>').append(
-                $('<td>').html(artist)
+                $('<td class="lib-artist-name">').text(artist),
+                $('<td class="lib-artist-add">')
+                    .html('<span class="glyphicon glyphicon-plus"></span>'),
+                $('<td class="lib-artist-play">')
+                    .html('<span class="glyphicon glyphicon-play"></span>')
             ).appendTo('#lib-artists');
         }
     });
@@ -108,6 +112,39 @@ function populate_library_artists(artists) {
     // bind click handler
     $('#lib-artists tbody tr').click(function(event) {
         update_library_albums($(this).find('td').text());
+    });
+    // bind add handler
+    $('#lib-artists tbody tr td.lib-artist-add').click(function(event) {
+        var artist = $(this).closest('tr').find('td.lib-artist-name').text();
+        $.get($SCRIPT_ROOT + '/mpd/findadd?'
+            + 'albumartist=' + encodeURIComponent(artist)
+        );
+    });
+    // bind add and play handler
+    $('#lib-artists tbody tr td.lib-artist-play').click(function(event) {
+        var artist = $(this).closest('tr').find('td.lib-artist-name').text();
+        $.ajax({
+            url: $SCRIPT_ROOT + '/mpd/find?'
+                + 'albumartist=' + encodeURIComponent(artist),
+            dataType: 'json',
+            success: function(songs) {
+                for (var i = 0; i < songs.length; i++) {
+                    var file = encodeURIComponent(songs[i].file);
+                    if (i == 0) {
+                        $.ajax({
+                            url: $SCRIPT_ROOT + '/mpd/addid?'+ file,
+                            dataType: 'text',
+                            success: function(songid) {
+                                var songid = encodeURIComponent(songid);
+                                $.get($SCRIPT_ROOT + '/mpd/playid?' + songid);
+                            }
+                        });
+                    } else {
+                        $.get($SCRIPT_ROOT + '/mpd/add?'+ file);
+                    }
+                }
+            }
+        });
     });
 }
 

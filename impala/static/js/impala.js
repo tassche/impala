@@ -120,7 +120,11 @@ function populate_library_albums(albums) {
             $('<tr>').append(
                 $('<td class="lib-album-artist">').text(album.artist),
                 $('<td class="lib-album-date">').text(album.date),
-                $('<td class="lib-album-title">').text(album.title)
+                $('<td class="lib-album-title">').text(album.title),
+                $('<td class="lib-album-add">')
+                    .html('<span class="glyphicon glyphicon-plus"></span>'),
+                $('<td class="lib-album-play">')
+                    .html('<span class="glyphicon glyphicon-play"></span>')
             ).appendTo('#lib-albums');
         }
     });
@@ -140,6 +144,51 @@ function populate_library_albums(albums) {
             $(this).find('td.lib-album-date').text(),
             $(this).find('td.lib-album-title').text()
         ));
+    });
+    // bind add handler
+    $('#lib-albums tbody tr td.lib-album-add').click(function(event) {
+        var album = new Album(
+            $(this).closest('tr').find('td.lib-album-artist').text(),
+            $(this).closest('tr').find('td.lib-album-date').text(),
+            $(this).closest('tr').find('td.lib-album-title').text()
+        );
+        $.get($SCRIPT_ROOT + '/mpd/findadd?'
+            + 'albumartist=' + encodeURIComponent(album.artist)
+            + '&album=' + encodeURIComponent(album.title)
+            + '&date=' + encodeURIComponent(album.date)
+        );
+    });
+    // bind add and play handler
+    $('#lib-albums tbody tr td.lib-album-play').click(function(event) {
+        var album = new Album(
+            $(this).closest('tr').find('td.lib-album-artist').text(),
+            $(this).closest('tr').find('td.lib-album-date').text(),
+            $(this).closest('tr').find('td.lib-album-title').text()
+        );
+        $.ajax({
+            url: $SCRIPT_ROOT + '/mpd/find?'
+                + 'albumartist=' + encodeURIComponent(album.artist)
+                + '&album=' + encodeURIComponent(album.title)
+                + '&date=' + encodeURIComponent(album.date),
+            dataType: 'json',
+            success: function(songs) {
+                for (var i = 0; i < songs.length; i++) {
+                    var file = encodeURIComponent(songs[i].file);
+                    if (i == 0) {
+                        $.ajax({
+                            url: $SCRIPT_ROOT + '/mpd/addid?'+ file,
+                            dataType: 'text',
+                            success: function(songid) {
+                                var songid = encodeURIComponent(songid);
+                                $.get($SCRIPT_ROOT + '/mpd/playid?' + songid);
+                            }
+                        });
+                    } else {
+                        $.get($SCRIPT_ROOT + '/mpd/add?'+ file);
+                    }
+                }
+            }
+        });
     });
 }
 

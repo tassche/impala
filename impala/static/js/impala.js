@@ -219,36 +219,6 @@ function populate_library_songs(songs) {
 }
 
 
-function on_state_play(mpd_status) {
-    $('#status-bitrate').text(mpd_status.bitrate);
-
-    var time = mpd_status.time.split(':');
-    $('#time-elapsed').text(seconds_to_str(time[0]));
-    $('#time-total').text(seconds_to_str(time[1]));
-
-    var progress = time[0] / time[1] * 100;
-    $('#time-progress').css('width', progress+'%')
-        .attr('aria-valuenow', time[0])
-        .attr('aria-valuemax', time[1]);
-}
-
-function on_state_stop() {
-    $('#currentsong-artist').text('');
-    $('#currentsong-title').text('Impala');
-    $('#currentsong-album').text('');
-    $('#currentsong-date').text('');
-
-    $('#status-bitrate').text('0');
-
-    $('#time-elapsed').text('00:00');
-    $('#time-total').text('00:00');
-
-    $('#time-progress').css('width', 0)
-        .attr('aria-valuenow', 0)
-        .attr('aria-valuemax', 0);
-}
-
-
 function update_currentsong() {
     $.ajax({
         url: $SCRIPT_ROOT + '/poller/currentsong',
@@ -347,6 +317,36 @@ function find_add_and_play(query) {
             }
         }
     });
+}
+
+
+function on_state_play(mpd_status) {
+    $('#status-bitrate').text(mpd_status.bitrate);
+
+    var time = mpd_status.time.split(':');
+    $('#time-elapsed').text(seconds_to_str(time[0]));
+    $('#time-total').text(seconds_to_str(time[1]));
+
+    var progress = time[0] / time[1] * 100;
+    $('#time-progress').css('width', progress+'%')
+        .attr('aria-valuenow', time[0])
+        .attr('aria-valuemax', time[1]);
+}
+
+function on_state_stop() {
+    $('#currentsong-artist').text('');
+    $('#currentsong-title').text('Impala');
+    $('#currentsong-album').text('');
+    $('#currentsong-date').text('');
+
+    $('#status-bitrate').text('0');
+
+    $('#time-elapsed').text('00:00');
+    $('#time-total').text('00:00');
+
+    $('#time-progress').css('width', 0)
+        .attr('aria-valuenow', 0)
+        .attr('aria-valuemax', 0);
 }
 
 

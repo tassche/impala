@@ -19,8 +19,8 @@
   overflow: auto;
 }
 #playlist tbody tr,
-#playlist th.pl_rm,
-#playlist td.pl_rm,
+#playlist th.pl-rm,
+#playlist td.pl-rm,
 #lib-artists tbody tr,
 #lib-albums tbody tr,
 #lib-songs tbody tr {

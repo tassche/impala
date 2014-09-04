@@ -48,7 +48,7 @@ function bind_volume_controls() {
 }
 
 function bind_clear_playlist() {
-    $('#playlist thead tr th.pl_rm').click(function(event) {
+    $('#playlist thead tr th.pl-rm').click(function(event) {
         event.stopPropagation();
         $.get($SCRIPT_ROOT + '/mpd/clear');
     });
@@ -61,28 +61,29 @@ function populate_playlist(playlistinfo) {
     // populate playlist
     $.each(playlistinfo, function(i, song) {
         $('<tr>').append(
-            $('<td class="pl_pos">').text(song.pos),
+            $('<td class="pl-pos">').text(song.pos),
             $('<td>').text(song.track),
             $('<td>').text(song.title),
             $('<td>').text(song.artist),
             $('<td>').text(song.album),
             $('<td class="text-right">').text(song.date),
             $('<td class="text-right">').text(seconds_to_str(song.time)),
-            $('<td class="pl_rm">').html(
+            $('<td class="pl-rm">').html(
                 '<span class="glyphicon glyphicon-remove"></span>'
             )
         ).appendTo('#playlist');
     });
     // hide the pos column
-    $('#playlist tbody tr td.pl_pos').hide();
-    // bind play and delete handlers
+    $('#playlist tbody tr td.pl-pos').hide();
+    // bind play handler
     $('#playlist tbody tr').click(function(event) {
-        var pos = $(this).find('td.pl_pos').text();
+        var pos = $(this).find('td.pl-pos').text();
         $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
     });
-    $('#playlist tbody tr td.pl_rm').click(function(event) {
+    // bind delete handler
+    $('#playlist tbody tr td.pl-rm').click(function(event) {
         event.stopPropagation();
-        var pos = $(this).closest('tr').find('td.pl_pos').text();
+        var pos = $(this).closest('tr').find('td.pl-pos').text();
         $.get($SCRIPT_ROOT + '/mpd/delete?' + pos);
     });
 }

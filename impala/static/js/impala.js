@@ -405,6 +405,7 @@ $(document).ready(function() {
     bind_volume_controls();
     bind_clear_playlist();
     poll();
+    resize_components();
     $(window).resize(resize_components);
     update_library_artists();
 });

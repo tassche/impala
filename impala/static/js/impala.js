@@ -336,7 +336,7 @@ function on_state_play(mpd_status) {
 
 function on_state_stop() {
     $('#currentsong-artist').text('');
-    $('#currentsong-title').text('Impala');
+    $('#currentsong-title').text('');
     $('#currentsong-album').text('');
     $('#currentsong-date').text('');
 
@@ -391,12 +391,27 @@ function poll() {
 
 function resize_components() {
     var height = (
-        $(window).height() - ($('div.jumbotron.currentsong').outerHeight(true)
-                              + $('div.controls').outerHeight(true))
+        $(window).height() - (
+            $('div.navbar').outerHeight(true)
+            + $('div.jumbotron.currentsong').outerHeight(true)
+            + $('div.controls').outerHeight(true)
+        )
     );
     $('div.playlist').css('height', height);
     $('div.library').css('height', height);
     $('div.library > div.col-md-4').css('height', height);
+}
+
+function update_navigation() {
+    switch(window.location.pathname) {
+        case '/':
+        case '/playlist':
+            $('#nav-pl').attr('class', 'active');
+            break;
+        case '/library':
+            $('#nav-lib').attr('class', 'active');
+            break;
+    }
 }
 
 
@@ -405,6 +420,7 @@ $(document).ready(function() {
     bind_volume_controls();
     bind_clear_playlist();
     poll();
+    update_navigation();
     resize_components();
     $(window).resize(resize_components);
     update_library_artists();

@@ -1,3 +1,4 @@
+var playback_options = {consume: 0, random: 0, repeat: 0, single: 0};
 var volume;
 var volume_off = 0; // allows to toggle mute
 var playlist; // playlist version
@@ -27,6 +28,16 @@ function bind_playback_controls() {
     $.each(elements, function(i, element) {
         $(element[0]).click(function(event) {
             $.get($SCRIPT_ROOT + element[1]);
+        });
+    });
+}
+
+function bind_playback_options() {
+    var options = ['consume', 'random', 'repeat', 'single'];
+    $.each(options, function(i, option) {
+        $('#' + option).click(function(event) {
+            var state = (playback_options[option] > 0) ? 0 : 1;
+            $.get($SCRIPT_ROOT + '/mpd/' + option + '?' + state);
         });
     });
 }
@@ -358,6 +369,7 @@ function on_poll_success(mpd_status) {
     } else {
         on_state_stop();
     }
+    update_playback_options(mpd_status);
     volume = parseInt(mpd_status.volume);
     $('#status-volume').text(volume);
     if (mpd_status.playlist != playlist) {
@@ -414,9 +426,26 @@ function update_navigation() {
     }
 }
 
+function update_playback_options(mpd_status) {
+    var options = ['consume', 'random', 'repeat', 'single'];
+    $.each(options, function(i, option) {
+        playback_options[option] = parseInt(mpd_status[option]);
+        var attr = $('#' + option).attr('class');
+        if (playback_options[option] > 0) {
+            $('#' + option).attr('class', attr + ' active');
+        } else {
+            var index = attr.indexOf(' active');
+            if (index > -1) {
+                $('#' + option).attr('class', attr.substring(0, index));
+            }
+        }
+    });
+}
+
 
 $(document).ready(function() {
     bind_playback_controls();
+    bind_playback_options();
     bind_volume_controls();
     bind_clear_playlist();
     poll();

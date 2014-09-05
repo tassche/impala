@@ -343,6 +343,11 @@ function on_state_play(mpd_status) {
     $('#time-progress').css('width', progress+'%')
         .attr('aria-valuenow', time[0])
         .attr('aria-valuemax', time[1]);
+
+    $('#playlist tbody tr').removeAttr('style');
+    $('#playlist tbody tr td.pl-pos').filter(function() {
+        return $(this).text() == mpd_status.song;
+    }).closest('tr').css('font-weight', 'bold');
 }
 
 function on_state_stop() {
@@ -359,6 +364,8 @@ function on_state_stop() {
     $('#time-progress').css('width', 0)
         .attr('aria-valuenow', 0)
         .attr('aria-valuemax', 0);
+
+    $('#playlist tbody tr').removeAttr('style');
 }
 
 

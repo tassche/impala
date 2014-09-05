@@ -19,15 +19,15 @@ Album.prototype.equals = function(album) {
 
 function bind_playback_controls() {
     var elements = [
-        ['#play', '/mpd/play'],
-        ['#pause', '/mpd/pause?1'],
-        ['#stop', '/mpd/stop'],
-        ['#previous', '/mpd/previous'],
-        ['#next', '/mpd/next']
+        ['#play', 'play'],
+        ['#pause', 'pause?1'],
+        ['#stop', 'stop'],
+        ['#previous', 'previous'],
+        ['#next', 'next']
     ];
     $.each(elements, function(i, element) {
         $(element[0]).click(function(event) {
-            $.get($SCRIPT_ROOT + element[1]);
+            $.get($SCRIPT_ROOT + '/mpd/' + element[1]);
         });
     });
 }

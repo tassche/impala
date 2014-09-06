@@ -59,9 +59,18 @@ function bind_volume_controls() {
 }
 
 function bind_clear_playlist() {
-    $('#playlist thead tr th.pl-rm').click(function(event) {
+    $('#playlist thead tr th.pl-rm, #nav-pl-clear').click(function(event) {
         event.stopPropagation();
         $.get($SCRIPT_ROOT + '/mpd/clear');
+    });
+}
+
+function bind_database_commands() {
+    $('#nav-lib-update').click(function(event) {
+        $.get($SCRIPT_ROOT + '/mpd/update');
+    });
+    $('#nav-lib-rescan').click(function(event) {
+        $.get($SCRIPT_ROOT + '/mpd/rescan');
     });
 }
 
@@ -455,6 +464,7 @@ $(document).ready(function() {
     bind_playback_options();
     bind_volume_controls();
     bind_clear_playlist();
+    bind_database_commands();
     poll();
     update_navigation();
     resize_components();

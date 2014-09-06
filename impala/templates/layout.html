@@ -20,7 +20,26 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li id="nav-pl"><a href="{{ url_for('main') }}">Playlist</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="visible-xs-inline-block">Playlist</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a role="menuitem" href="#" id="nav-pl-clear"><span class="glyphicon glyphicon-remove"></span> Clear</a></li>
+                    </ul>
+                </li>
                 <li id="nav-lib"><a href="{{ url_for('library') }}">Library</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="visible-xs-inline-block">Database</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a role="menuitem" href="#" id="nav-lib-update"><span class="glyphicon glyphicon-refresh"></span> Update</a></li>
+                        <li role="presentation"><a role="menuitem" href="#" id="nav-lib-rescan"><span class="glyphicon glyphicon-hdd"></span> Rescan</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>

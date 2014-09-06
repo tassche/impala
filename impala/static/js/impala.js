@@ -229,11 +229,14 @@ function populate_library_songs(songs) {
     $('#lib-songs tbody tr td.lib-song-file').hide();
     // bind add handler
     $('#lib-songs tbody tr td.lib-song-add').click(function(event) {
+        event.stopPropagation();
         var file = $(this).closest('tr').find('td.lib-song-file').text();
         $.get($SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file));
     });
     // bind add and play handler
-    $('#lib-songs tbody tr td.lib-song-play').click(function(event) {
+    $('#lib-songs tbody tr, #lib-songs tbody tr td.lib-song-play')
+        .click(function(event) {
+        event.stopPropagation();
         var file = $(this).closest('tr').find('td.lib-song-file').text();
         add_and_play(file);
     });

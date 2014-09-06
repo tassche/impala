@@ -18,6 +18,9 @@
             <a class="navbar-brand" href="{{ url_for('main') }}">Impala</a>
         </div>
         <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-left" id="nav-lib-updating">
+                <li><p class="navbar-text"><span class="glyphicon glyphicon-tasks"></span> Updating database...</p></li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li id="nav-pl"><a href="{{ url_for('main') }}">Playlist</a></li>
                 <li class="dropdown">

@@ -1,6 +1,12 @@
 .navbar-static-top {
   margin-bottom: 6px;
 }
+.navbar-collapse > ul > li > p.navbar-text {
+  margin-left: 15px;
+}
+#nav-lib-updating {
+  display: none;
+}
 .jumbotron.currentsong {
   margin-bottom: 6px;
   padding-bottom: 0px;

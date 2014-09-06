@@ -391,6 +391,11 @@ function on_poll_success(mpd_status) {
     if (mpd_status.playlist != playlist) {
         update_playlist(mpd_status.playlist);
     }
+    if (mpd_status.updating_db) {
+        $('#nav-lib-updating').show();
+    } else {
+        $('#nav-lib-updating').hide();
+    }
 }
 
 function on_poll_error() {

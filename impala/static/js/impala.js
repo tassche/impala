@@ -2,6 +2,7 @@ var playback_options = {consume: 0, random: 0, repeat: 0, single: 0};
 var volume;
 var volume_off = 0; // allows to toggle mute
 var playlist; // playlist version
+var updating_db = false;
 
 
 function Album(artist, date, title) {
@@ -396,8 +397,13 @@ function on_poll_success(mpd_status) {
     }
     if (mpd_status.updating_db) {
         $('#nav-lib-updating').show();
+        updating_db = true;
     } else {
         $('#nav-lib-updating').hide();
+        if (updating_db) {
+            update_library_artists();
+            updating_db = false;
+        }
     }
 }
 

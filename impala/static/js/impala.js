@@ -448,10 +448,12 @@ function update_navigation() {
     switch(window.location.pathname) {
         case '/':
         case '/playlist':
-            $('#nav-pl').attr('class', 'active');
+            var attr = $('#nav-pl').attr('class');
+            $('#nav-pl').attr('class', attr + ' active');
             break;
         case '/library':
-            $('#nav-lib').attr('class', 'active');
+            var attr = $('#nav-lib').attr('class');
+            $('#nav-lib').attr('class', attr + ' active');
             break;
     }
 }

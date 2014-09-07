@@ -441,7 +441,14 @@ function resize_components() {
     );
     $('div.playlist').css('height', height);
     $('div.library').css('height', height);
-    $('div.library > div.col-md-4').css('height', height);
+    if ($('#nav-pl, #nav-lib').is(':visible')) {
+        // sm, md or lg viewport
+        $('div.library > div.col-library').css('height', height);
+    } else {
+        // xs viewport
+        $('div.library > div.col-xs-6').css('height', height / 2);
+        $('div.library > div.col-xs-12').css('height', height / 2);
+    }
 }
 
 function update_navigation() {

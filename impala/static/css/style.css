@@ -24,7 +24,7 @@
   margin-bottom: 6px;
 }
 .container.playlist,
-.container.library > .col-md-4 {
+.container.library > .col-library {
   overflow: auto;
 }
 #playlist tbody tr,

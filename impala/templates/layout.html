@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-{% include 'navbar.html' %}
-{% include 'currentsong.html' %}
-{% include 'controls.html' %}
+{% include 'navbar.inc.html' %}
+{% include 'currentsong.inc.html' %}
+{% include 'controls.inc.html' %}
 {% block body %}{% endblock %}
 {% block script %}
 <script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>

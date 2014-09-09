@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block currentsong %}
+    {% include 'currentsong.inc.html' %}
+{% endblock %}
+
+{% block controls %}
+    {% include 'controls.inc.html' %}
+{% endblock %}
+
+{% block body %}
+    {{ super() }}
+{% endblock %}

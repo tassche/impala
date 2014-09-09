@@ -1,22 +1,23 @@
-<!doctype html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Impala</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-{% include 'navbar.inc.html' %}
-{% include 'currentsong.inc.html' %}
-{% include 'controls.inc.html' %}
-{% block body %}{% endblock %}
-{% block script %}
-<script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
-<script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/impala.js') }}"></script>
+{% extends "base.html" %}
+{% block navbar %}
+    {% include 'navbar.inc.html' %}
 {% endblock %}
-</body>
-</html>
+
+{% block body %}
+    {% block currentsong %}
+        <div class="hidden-xs">
+            {% include 'currentsong.inc.html' %}
+        </div>
+    {% endblock %}
+
+    {% block controls %}
+        <div class="hidden-xs">
+            {% include 'controls.inc.html' %}
+        </div>
+    {% endblock %}
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/impala.js') }}"></script>
+{% endblock %}

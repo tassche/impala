@@ -42,10 +42,15 @@ def redirect_on_error(func):
     return wrapper
 
 @app.route('/')
-@app.route('/playlist')
 @redirect_on_error
 @mpdclient
 def main():
+    return render_template('currentsong.html')
+
+@app.route('/playlist')
+@redirect_on_error
+@mpdclient
+def playlist():
     return render_template('playlist.html')
 
 @app.route('/library')

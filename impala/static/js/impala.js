@@ -454,6 +454,7 @@ function resize_components() {
 function update_navigation() {
     switch(window.location.pathname) {
         case '/':
+            break;
         case '/playlist':
             var attr = $('#nav-pl').attr('class');
             $('#nav-pl').attr('class', attr + ' active');

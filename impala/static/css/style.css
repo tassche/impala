@@ -35,3 +35,6 @@
 #lib-songs tbody tr {
   cursor: pointer;
 }
+#lib-bc {
+  margin-bottom: 0px;
+}

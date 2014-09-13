@@ -35,7 +35,19 @@ function populate_library_artists(artists) {
     update_library_albums(artist);
     // bind click handler
     $('#lib-artists tbody tr').click(function(event) {
-        update_library_albums($(this).find('td').text());
+        var artist = $(this).find('td').text();
+        update_library_albums(artist);
+
+        $('li.dynamic').detach();
+        $('#lib-bc').append(
+            $('<li class="dynamic">').append(
+                breadcrumbs.artist.text(artist)
+            )
+        );
+        if (viewport == 'xs') {
+            $('div.col-library.artists').hide();
+            $('div.col-library.albums').show();
+        }
     });
     // bind add handler
     $('#lib-artists tbody tr td.lib-artist-add').click(function(event) {
@@ -79,11 +91,23 @@ function populate_library_albums(albums) {
     update_library_songs(album);
     // bind click handler
     $('#lib-albums tbody tr').click(function(event) {
+        var album = $(this).find('td.lib-album-title').text();
         update_library_songs(new Album(
             $(this).find('td.lib-album-artist').text(),
             $(this).find('td.lib-album-date').text(),
-            $(this).find('td.lib-album-title').text()
+            album
         ));
+
+        $('#lib-bc-album').closest('li.dynamic').detach();
+        $('#lib-bc').append(
+            $('<li class="dynamic">').append(
+                breadcrumbs.album.text(album)
+            )
+        );
+        if (viewport == 'xs') {
+            $('div.col-library.albums').hide();
+            $('div.col-library.songs').show();
+        }
     });
     // bind add handler
     $('#lib-albums tbody tr td.lib-album-add').click(function(event) {
@@ -216,10 +240,61 @@ function find_add_and_play(query) {
 }
 
 
+var breadcrumbs = {
+    home: $('<a id="lib-bc-home" href="#">'),
+    artist: $('<a id="lib-bc-artist" href="#">'),
+    album: $('<a id="lib-bc-album" href="#">')
+}
+
+function bind_breadcrumbs() {
+    breadcrumbs.home.click(function(event) {
+        $('div.col-library.artists').show();
+        $('div.col-library.albums').hide();
+        $('div.col-library.songs').hide();
+        $('li.dynamic').detach();
+    });
+    breadcrumbs.artist.click(function(event) {
+        $('div.col-library.artists').hide();
+        $('div.col-library.albums').show();
+        $('div.col-library.songs').hide();
+        $('#lib-bc-album').closest('li.dynamic').detach();
+    });
+    breadcrumbs.album.click(function(event) {
+        $('div.col-library.artists').hide();
+        $('div.col-library.albums').hide();
+        $('div.col-library.songs').show();
+    });
+}
+
+
+function init_xs_viewport() {
+    $('div.col-library.albums').hide();
+    $('div.col-library.songs').hide();
+}
+
+
 $(document).ready(function() {
     // update navigation
     var attr = $('#nav-lib').attr('class');
     $('#nav-lib').attr('class', attr + ' active');
 
+    bind_breadcrumbs();
+    $('#lib-bc').append($('<li>').append(
+        breadcrumbs.home.text('Library')
+    ));
+    if (viewport == 'xs') {
+        init_xs_viewport();
+    }
+    $(window).resize(function(event) {
+        if (viewport == 'xs') {
+            init_xs_viewport();
+        } else {
+            $('div.col-library.artists').show();
+            $('div.col-library.albums').show();
+            $('div.col-library.songs').show();
+        }
+    });
+
     update_library_artists();
 });
+

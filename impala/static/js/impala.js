@@ -192,8 +192,9 @@ function resize_components() {
         $('div.library > div.col-library').css('height', height);
     } else {
         // xs viewport
-        $('div.library > div.col-xs-6').css('height', height / 2);
-        $('div.library > div.col-xs-12').css('height', height / 2);
+        height -= $('#library-nav').outerHeight(true);
+        $('div.library').css('height', height);
+        $('div.library > div.col-xs-12').css('height', height);
     }
 }
 

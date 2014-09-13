@@ -18,3 +18,7 @@
         </table>
     </div>
 {% endblock %}
+{% block script %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/playlist.js') }}"></script>
+{% endblock %}

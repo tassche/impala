@@ -1,4 +1,5 @@
 var page = window.location.pathname;
+var viewport; // viewport class (xs, sm, md or lg)
 
 
 var playback_options = {consume: 0, random: 0, repeat: 0, single: 0};
@@ -196,6 +197,10 @@ function resize_components() {
     }
 }
 
+function update_viewport_class() {
+    viewport = get_viewport_class();
+}
+
 function update_playback_options(mpd_status) {
     var options = ['consume', 'random', 'repeat', 'single'];
     $.each(options, function(i, option) {
@@ -222,6 +227,8 @@ $(document).ready(function() {
     poll();
     resize_components();
     $(window).resize(resize_components);
+    update_viewport_class();
+    $(window).resize(update_viewport_class);
 });
 
 
@@ -244,4 +251,17 @@ function seconds_to_str(seconds) {
         str = d.toString() + 'd ' + str;
     }
     return str;
+}
+
+function get_viewport_class() {
+    var w = window.outerWidth;
+    if (w < 768) {
+        return 'xs';
+    } else if (w < 992) {
+        return 'sm';
+    } else if (w < 1200) {
+        return 'md';
+    } else {
+        return 'lg';
+    }
 }

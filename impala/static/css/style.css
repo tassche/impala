@@ -35,6 +35,12 @@
 #lib-songs tbody tr {
   cursor: pointer;
 }
+#library-nav {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
 #lib-bc {
   margin-bottom: 0px;
+  min-height: 36px;
 }

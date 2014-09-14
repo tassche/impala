@@ -178,23 +178,24 @@ function poll() {
 
 
 function resize_components() {
-    var height = (
-        $(window).height() - (
-            $('div.navbar').outerHeight(true)
-            + $('div.jumbotron.currentsong').outerHeight(true)
-            + $('div.controls').outerHeight(true)
-        )
-    );
-    $('div.playlist').css('height', height);
-    $('div.library').css('height', height);
-    if ($('#nav-pl, #nav-lib').is(':visible')) {
-        // sm, md or lg viewport
-        $('div.library > div.col-library').css('height', height);
-    } else {
-        // xs viewport
+    var height = $(window).height() - $('div.navbar').outerHeight(true);
+    if (viewport == 'xs') {
+        $('div.playlist').css('height', height);
+        $('div.library').css('height', height);
+
+        // library-nav visible
         height -= $('#library-nav').outerHeight(true);
+
         $('div.library').css('height', height);
         $('div.library > div.col-xs-12').css('height', height);
+    } else {
+        // jumbotron and controls visible
+        height -= $('div.jumbotron.currentsong').outerHeight(true);
+        height -= $('div.controls').outerHeight(true);
+
+        $('div.playlist').css('height', height);
+        $('div.library').css('height', height);
+        $('div.library > div.col-library').css('height', height);
     }
 }
 
@@ -226,10 +227,12 @@ $(document).ready(function() {
     bind_nav_playlist_commands();
     bind_nav_database_commands();
     poll();
-    resize_components();
-    $(window).resize(resize_components);
     update_viewport_class();
-    $(window).resize(update_viewport_class);
+    resize_components();
+    $(window).resize(function() {
+        update_viewport_class();
+        resize_components();
+    });
 });
 
 

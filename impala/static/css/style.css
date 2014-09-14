@@ -44,3 +44,6 @@
   margin-bottom: 0px;
   min-height: 36px;
 }
+#quicknav .btn {
+  border-radius: 0;
+}

@@ -57,5 +57,8 @@ $(document).ready(function() {
     var attr = $('#nav-pl').attr('class');
     $('#nav-pl').attr('class', attr + ' active');
 
+    attr = $('#quicknav-playlist').attr('class');
+    $('#quicknav-playlist').attr('class', attr + ' btn-info');
+
     bind_clear_playlist();
 });

@@ -47,6 +47,7 @@ function populate_library_artists(artists) {
         if (viewport == 'xs') {
             $('div.col-library.artists').hide();
             $('div.col-library.albums').show();
+            resize_components();
         }
     });
     // bind add handler
@@ -107,6 +108,7 @@ function populate_library_albums(albums) {
         if (viewport == 'xs') {
             $('div.col-library.albums').hide();
             $('div.col-library.songs').show();
+            resize_components();
         }
     });
     // bind add handler
@@ -252,17 +254,20 @@ function bind_breadcrumbs() {
         $('div.col-library.albums').hide();
         $('div.col-library.songs').hide();
         $('li.dynamic').detach();
+        resize_components();
     });
     breadcrumbs.artist.click(function(event) {
         $('div.col-library.artists').hide();
         $('div.col-library.albums').show();
         $('div.col-library.songs').hide();
         $('#lib-bc-album').closest('li.dynamic').detach();
+        resize_components();
     });
     breadcrumbs.album.click(function(event) {
         $('div.col-library.artists').hide();
         $('div.col-library.albums').hide();
         $('div.col-library.songs').show();
+        resize_components();
     });
 }
 
@@ -277,6 +282,9 @@ $(document).ready(function() {
     // update navigation
     var attr = $('#nav-lib').attr('class');
     $('#nav-lib').attr('class', attr + ' active');
+
+    attr = $('#quicknav-library').attr('class');
+    $('#quicknav-library').attr('class', attr + ' btn-info');
 
     bind_breadcrumbs();
     $('#lib-bc').append($('<li>').append(

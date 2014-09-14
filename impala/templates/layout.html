@@ -17,6 +17,12 @@
     {% endblock %}
 {% endblock %}
 
+{% block quicknav %}
+    <div class="hidden-sm hidden-md hidden-lg">
+        {% include 'quicknav.inc.html' %}
+    </div>
+{% endblock %}
+
 {% block script %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/impala.js') }}"></script>

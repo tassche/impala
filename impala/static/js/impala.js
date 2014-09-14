@@ -180,6 +180,9 @@ function poll() {
 function resize_components() {
     var height = $(window).height() - $('div.navbar').outerHeight(true);
     if (viewport == 'xs') {
+        height -= $('#quicknav').outerHeight(true);
+
+        $('#currentsong').css('height', height);
         $('div.playlist').css('height', height);
         $('div.library').css('height', height);
 
@@ -193,6 +196,7 @@ function resize_components() {
         height -= $('div.jumbotron.currentsong').outerHeight(true);
         height -= $('div.controls').outerHeight(true);
 
+        $('#currentsong').css('height', height);
         $('div.playlist').css('height', height);
         $('div.library').css('height', height);
         $('div.library > div.col-library').css('height', height);

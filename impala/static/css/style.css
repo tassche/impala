@@ -1,5 +1,5 @@
 .navbar-static-top {
-  margin-bottom: 6px;
+  margin-bottom: 0px;
 }
 .navbar-collapse > ul > li > p.navbar-text {
   margin-left: 15px;
@@ -7,22 +7,7 @@
 #nav-lib-updating {
   display: none;
 }
-.jumbotron.currentsong {
-  margin-bottom: 6px;
-  padding-bottom: 0px;
-  padding-top: 0px;
-}
-.container.currentsong > ul > li > p {
-  margin-bottom: 0px;
-}
-.container.currentsong > p,
-.container.currentsong > h2,
-.container.currentsong > h3 {
-  min-height: 1em;
-}
-.container.controls {
-  margin-bottom: 6px;
-}
+
 .container.playlist,
 .container.library > .col-library {
   overflow: auto;
@@ -44,6 +29,47 @@
   margin-bottom: 0px;
   min-height: 36px;
 }
+
+
 #quicknav .btn {
   border-radius: 0;
+}
+
+
+#currentsong {
+    overflow: auto;
+}
+#currentsong .jumbotron {
+    margin-bottom: 0px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+#currentsong .progress {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+#currentsong .progress,
+#currentsong .progress-bar {
+    height: 6px;
+}
+
+
+#currentsong-mini.jumbotron {
+  margin-bottom: 6px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+#currentsong-mini .progress,
+#currentsong-mini .progress-bar {
+    height: 6px;
+}
+
+
+#controls .controls {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+#controls .controls-btn-group {
+    margin-top: 3px;
+    margin-bottom: 3px;
 }

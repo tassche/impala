@@ -180,6 +180,7 @@ function poll() {
 function resize_components() {
     var height = $(window).height() - $('div.navbar').outerHeight(true);
     if (viewport == 'xs') {
+        height -= $('#controls').outerHeight(true);
         height -= $('#quicknav').outerHeight(true);
 
         $('#currentsong').css('height', height);
@@ -192,9 +193,9 @@ function resize_components() {
         $('div.library').css('height', height);
         $('div.library > div.col-xs-12').css('height', height);
     } else {
-        // jumbotron and controls visible
-        height -= $('div.jumbotron.currentsong').outerHeight(true);
-        height -= $('div.controls').outerHeight(true);
+        // currentsong-mini and controls visible
+        height -= $('#currentsong-mini').outerHeight(true);
+        height -= $('#controls').outerHeight(true);
 
         $('#currentsong').css('height', height);
         $('div.playlist').css('height', height);

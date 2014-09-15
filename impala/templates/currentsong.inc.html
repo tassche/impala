@@ -1,14 +1,16 @@
-<div class="jumbotron currentsong">
-    <div class="container currentsong">
-        <h3><span id=currentsong-artist></span></h3>
-        <h2><span id=currentsong-title></span></h2>
-        <h3><span id=currentsong-album></span> <small><span id="currentsong-date"></span></small></h3>
+<div id="currentsong-mini" class="jumbotron">
+    <div class="container">
+        <ul class="list-inline text-left h3">
+            <li><span id="currentsong-artist"></span></li>
+            <li><strong><span id="currentsong-title"></span></strong></li>
+            <li><span id="currentsong-album"></span> <small><span id="currentsong-date"></span></small></li>
+        </ul>
         <div class="progress">
             <div id="time-progress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
         </div>
-        <ul class="list-inline text-right">
-            <li><p><small><span id="status-bitrate"></span> kbps</small></p></li>
-            <li><p><small><span id="time-elapsed"></span> / <span id="time-total"></span></small></p></li>
+        <ul class="list-inline text-right h4">
+            <li><small><span id="status-bitrate"></span> kbps</small></li>
+            <li><small><span id="time-elapsed"></span> / <span id="time-total"></span></small></li>
         </ul>
     </div>
 </div>

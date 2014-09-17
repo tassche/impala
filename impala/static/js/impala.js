@@ -214,9 +214,9 @@ function update_playback_options(mpd_status) {
         playback_options[option] = parseInt(mpd_status[option]);
         var attr = $('#' + option).attr('class');
         if (playback_options[option] > 0) {
-            $('#' + option).attr('class', attr + ' active');
+            $('#' + option).attr('class', attr + ' btn-info');
         } else {
-            var index = attr.indexOf(' active');
+            var index = attr.indexOf(' btn-info');
             if (index > -1) {
                 $('#' + option).attr('class', attr.substring(0, index));
             }

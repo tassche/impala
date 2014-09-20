@@ -54,8 +54,8 @@ function populate_playlist(playlistinfo) {
 
 $(document).ready(function() {
     // update navigation
-    var attr = $('#nav-pl').attr('class');
-    $('#nav-pl').attr('class', attr + ' active');
+    var attr = $('#nav-playlist').attr('class');
+    $('#nav-playlist').attr('class', attr + ' active');
 
     attr = $('#quicknav-playlist').attr('class');
     $('#quicknav-playlist').attr('class', attr + ' btn-info');

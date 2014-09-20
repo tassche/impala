@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
-{% block body %}
-    <div id="currentsong">
+
+{% block currentsong %}{% endblock %}
+{% block controls %}{% endblock %}
+
+{% block content %}
+    <div id="content">
         <div id="artwork" class="container"></div>
-        <div id="currentsong-info" class="jumbotron">
+        <div id="currentsong" class="jumbotron">
             <div class="container">
                 <h3 class="text-center"><span id="currentsong-artist"></span></h3>
                 <h3 class="text-center"><strong><span id="currentsong-title"></span></strong></h3>
@@ -17,7 +21,5 @@
             </div>
         </div>
     </div>
-    {% block controls %}
-        {% include "controls.inc.html" %}
-    {% endblock %}
+    {% include 'controls.inc.html' %}
 {% endblock %}

@@ -178,30 +178,16 @@ function poll() {
 
 
 function resize_components() {
-    var height = $(window).height() - $('div.navbar').outerHeight(true);
-    if (viewport == 'xs') {
-        height -= $('#controls').outerHeight(true);
-        height -= $('#quicknav').outerHeight(true);
+    var height = $(window).height();
+    height -= $('#navbar').outerHeight(true);
+    height -= $('#currentsong-mini').outerHeight(true);
+    height -= $('#controls').outerHeight(true);
+    height -= $('#quicknav').outerHeight(true);
 
-        $('#currentsong').css('height', height);
-        $('div.playlist').css('height', height);
-        $('div.library').css('height', height);
+    height -= $('#lib-breadcrumbs').outerHeight(true);
 
-        // library-nav visible
-        height -= $('#library-nav').outerHeight(true);
-
-        $('div.library').css('height', height);
-        $('div.library > div.col-xs-12').css('height', height);
-    } else {
-        // currentsong-mini and controls visible
-        height -= $('#currentsong-mini').outerHeight(true);
-        height -= $('#controls').outerHeight(true);
-
-        $('#currentsong').css('height', height);
-        $('div.playlist').css('height', height);
-        $('div.library').css('height', height);
-        $('div.library > div.col-library').css('height', height);
-    }
+    $('#content').css('height', height);
+    $('#content .content').css('height', height);
 }
 
 function update_viewport_class() {

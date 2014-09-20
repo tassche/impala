@@ -1,9 +1,8 @@
 {% extends "layout.html" %}
-{% block body %}
-    {{ super() }}
-    <div class="container library">
-        <div class="col-library artists col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <table id="lib-artists" class="table table-hover">
+{% block content %}
+    <div id="content" class="container">
+        <div id="lib-artists" class="content col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <table id="artists" class="table table-hover">
                 <thead>
                     <tr>
                         <th>Artist</th>
@@ -14,8 +13,8 @@
                 <tbody></tbody>
             </table>
         </div>
-        <div class="col-library albums col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <table id="lib-albums" class="table table-hover">
+        <div id="lib-albums" class="content col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <table id="albums" class="table table-hover">
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -27,8 +26,8 @@
                 <tbody></tbody>
             </table>
         </div>
-        <div class="col-library songs col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <table id="lib-songs" class="table table-hover">
+        <div id="lib-songs" class="content col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <table id="songs" class="table table-hover">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -41,8 +40,8 @@
             </table>
         </div>
     </div>
-    <div id="library-nav" class="container-fluid hidden-sm hidden-md hidden-lg">
-        <ol id="lib-bc" class="breadcrumb"></ol>
+    <div id="lib-breadcrumbs" class="container-fluid hidden-sm hidden-md hidden-lg">
+        <ol id="lib-breadcrumb" class="breadcrumb"></ol>
     </div>
 {% endblock %}
 {% block script %}

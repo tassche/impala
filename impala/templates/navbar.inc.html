@@ -1,4 +1,4 @@
-<div class="navbar navbar-default navbar-static-top" role="navigation">
+<div id="navbar" class="navbar navbar-default navbar-static-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -10,12 +10,12 @@
             <a class="navbar-brand" href="{{ url_for('main') }}">Impala</a>
         </div>
         <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-left" id="nav-lib-updating">
+            <ul id="nav-lib-updating" class="nav navbar-nav navbar-left">
                 <li><p class="navbar-text"><span class="glyphicon glyphicon-tasks"></span> Updating database...</p></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <!-- Playlist -->
-                <li class="hidden-xs" id="nav-pl"><a href="{{ url_for('playlist') }}">Playlist</a></li>
+                <li id="nav-playlist" class="hidden-xs"><a href="{{ url_for('playlist') }}">Playlist</a></li>
                 <!-- Playlist dropdown -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -26,11 +26,11 @@
                         <li role="presentation" class="visible-xs-block">
                             <a role="menuitem" href="{{ url_for('playlist') }}"><span class="glyphicon glyphicon-music"></span> Current playlist</a>
                         </li>
-                        <li role="presentation"><a role="menuitem" href="#" id="nav-pl-clear"><span class="glyphicon glyphicon-remove"></span> Clear</a></li>
+                        <li role="presentation"><a id="nav-pl-clear" role="menuitem" href="#"><span class="glyphicon glyphicon-remove"></span> Clear</a></li>
                     </ul>
                 </li>
                 <!-- Database -->
-                <li class="hidden-xs" id="nav-lib"><a href="{{ url_for('library') }}">Library</a></li>
+                <li id="nav-library" class="hidden-xs"><a href="{{ url_for('library') }}">Library</a></li>
                 <!-- Database dropdown -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -41,8 +41,8 @@
                         <li role="presentation" class="visible-xs-block">
                             <a role="menuitem" href="{{ url_for('library') }}"><span class="glyphicon glyphicon-th"></span> Library</a>
                         </li>
-                        <li role="presentation"><a role="menuitem" href="#" id="nav-lib-update"><span class="glyphicon glyphicon-refresh"></span> Update</a></li>
-                        <li role="presentation"><a role="menuitem" href="#" id="nav-lib-rescan"><span class="glyphicon glyphicon-hdd"></span> Rescan</a></li>
+                        <li role="presentation"><a id="nav-lib-update" role="menuitem" href="#"><span class="glyphicon glyphicon-refresh"></span> Update</a></li>
+                        <li role="presentation"><a id="nav-lib-rescan" role="menuitem" href="#"><span class="glyphicon glyphicon-hdd"></span> Rescan</a></li>
                     </ul>
                 </li>
             </ul>

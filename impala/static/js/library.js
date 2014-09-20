@@ -13,7 +13,7 @@ Album.prototype.equals = function(album) {
 
 function populate_library_artists(artists) {
     // clear existing artists
-    $('#lib-artists tbody tr').remove();
+    $('#artists tbody tr').remove();
     // populate artist table
     $.each(artists, function(i, artist) {
         if (artist != '') {
@@ -23,7 +23,7 @@ function populate_library_artists(artists) {
                     .html('<span class="glyphicon glyphicon-plus"></span>'),
                 $('<td class="lib-artist-play">')
                     .html('<span class="glyphicon glyphicon-play"></span>')
-            ).appendTo('#lib-artists');
+            ).appendTo('#artists');
         }
     });
     // find the first artist with a non empty name and update the albums
@@ -34,31 +34,31 @@ function populate_library_artists(artists) {
     }
     update_library_albums(artist);
     // bind click handler
-    $('#lib-artists tbody tr').click(function(event) {
+    $('#artists tbody tr').click(function(event) {
         var artist = $(this).find('td').text();
         update_library_albums(artist);
 
         $('li.dynamic').detach();
-        $('#lib-bc').append(
+        $('#lib-breadcrumb').append(
             $('<li class="dynamic">').append(
                 breadcrumbs.artist.text(artist)
             )
         );
         if (viewport == 'xs') {
-            $('div.col-library.artists').hide();
-            $('div.col-library.albums').show();
+            $('#lib-artists').hide();
+            $('#lib-albums').show();
             resize_components();
         }
     });
     // bind add handler
-    $('#lib-artists tbody tr td.lib-artist-add').click(function(event) {
+    $('#artists tbody tr td.lib-artist-add').click(function(event) {
         var artist = $(this).closest('tr').find('td.lib-artist-name').text();
         $.get($SCRIPT_ROOT + '/mpd/findadd?'
             + 'albumartist=' + encodeURIComponent(artist)
         );
     });
     // bind add and play handler
-    $('#lib-artists tbody tr td.lib-artist-play').click(function(event) {
+    $('#artists tbody tr td.lib-artist-play').click(function(event) {
         var artist = $(this).closest('tr').find('td.lib-artist-name').text();
         find_add_and_play('albumartist=' + encodeURIComponent(artist));
     });
@@ -66,7 +66,7 @@ function populate_library_artists(artists) {
 
 function populate_library_albums(albums) {
     // clear existing albums
-    $('#lib-albums tbody tr').remove();
+    $('#albums tbody tr').remove();
     // populate album table
     $.each(albums, function(i, album) {
         if (album.title != '') {
@@ -78,11 +78,11 @@ function populate_library_albums(albums) {
                     .html('<span class="glyphicon glyphicon-plus"></span>'),
                 $('<td class="lib-album-play">')
                     .html('<span class="glyphicon glyphicon-play"></span>')
-            ).appendTo('#lib-albums');
+            ).appendTo('#albums');
         }
     });
     // hide the artist column
-    $('#lib-albums tbody tr td.lib-album-artist').hide();
+    $('#albums tbody tr td.lib-album-artist').hide();
     // find the first album with a non empty title and update the songs
     var i = 0, album = null;
     while(album === null && i < albums.length) {
@@ -91,7 +91,7 @@ function populate_library_albums(albums) {
     }
     update_library_songs(album);
     // bind click handler
-    $('#lib-albums tbody tr').click(function(event) {
+    $('#albums tbody tr').click(function(event) {
         var album = $(this).find('td.lib-album-title').text();
         update_library_songs(new Album(
             $(this).find('td.lib-album-artist').text(),
@@ -99,20 +99,20 @@ function populate_library_albums(albums) {
             album
         ));
 
-        $('#lib-bc-album').closest('li.dynamic').detach();
-        $('#lib-bc').append(
+        $('#lib-breadcrumb-album').closest('li.dynamic').detach();
+        $('#lib-breadcrumb').append(
             $('<li class="dynamic">').append(
                 breadcrumbs.album.text(album)
             )
         );
         if (viewport == 'xs') {
-            $('div.col-library.albums').hide();
-            $('div.col-library.songs').show();
+            $('#lib-albums').hide();
+            $('#lib-songs').show();
             resize_components();
         }
     });
     // bind add handler
-    $('#lib-albums tbody tr td.lib-album-add').click(function(event) {
+    $('#albums tbody tr td.lib-album-add').click(function(event) {
         var album = new Album(
             $(this).closest('tr').find('td.lib-album-artist').text(),
             $(this).closest('tr').find('td.lib-album-date').text(),
@@ -125,7 +125,7 @@ function populate_library_albums(albums) {
         );
     });
     // bind add and play handler
-    $('#lib-albums tbody tr td.lib-album-play').click(function(event) {
+    $('#albums tbody tr td.lib-album-play').click(function(event) {
         var album = new Album(
             $(this).closest('tr').find('td.lib-album-artist').text(),
             $(this).closest('tr').find('td.lib-album-date').text(),
@@ -141,7 +141,7 @@ function populate_library_albums(albums) {
 
 function populate_library_songs(songs) {
     // clear existing songs
-    $('#lib-songs tbody tr').remove();
+    $('#songs tbody tr').remove();
     // populate song table
     $.each(songs, function(i, song) {
         $('<tr>').append(
@@ -152,18 +152,18 @@ function populate_library_songs(songs) {
             $('<td class="lib-song-play">')
                 .html('<span class="glyphicon glyphicon-play"></span>'),
             $('<td class="lib-song-file">').text(song.file)
-        ).appendTo('#lib-songs');
+        ).appendTo('#songs');
     });
     // hide the file column
-    $('#lib-songs tbody tr td.lib-song-file').hide();
+    $('#songs tbody tr td.lib-song-file').hide();
     // bind add handler
-    $('#lib-songs tbody tr td.lib-song-add').click(function(event) {
+    $('#songs tbody tr td.lib-song-add').click(function(event) {
         event.stopPropagation();
         var file = $(this).closest('tr').find('td.lib-song-file').text();
         $.get($SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file));
     });
     // bind add and play handler
-    $('#lib-songs tbody tr, #lib-songs tbody tr td.lib-song-play')
+    $('#songs tbody tr, #songs tbody tr td.lib-song-play')
         .click(function(event) {
         event.stopPropagation();
         var file = $(this).closest('tr').find('td.lib-song-file').text();
@@ -243,51 +243,51 @@ function find_add_and_play(query) {
 
 
 var breadcrumbs = {
-    home: $('<a id="lib-bc-home" href="#">'),
-    artist: $('<a id="lib-bc-artist" href="#">'),
-    album: $('<a id="lib-bc-album" href="#">')
+    home: $('<a id="lib-breadcrumb-home" href="#">'),
+    artist: $('<a id="lib-breadcrumb-artist" href="#">'),
+    album: $('<a id="lib-breadcrumb-album" href="#">')
 }
 
 function bind_breadcrumbs() {
     breadcrumbs.home.click(function(event) {
-        $('div.col-library.artists').show();
-        $('div.col-library.albums').hide();
-        $('div.col-library.songs').hide();
+        $('#lib-artists').show();
+        $('#lib-albums').hide();
+        $('#lib-songs').hide();
         $('li.dynamic').detach();
         resize_components();
     });
     breadcrumbs.artist.click(function(event) {
-        $('div.col-library.artists').hide();
-        $('div.col-library.albums').show();
-        $('div.col-library.songs').hide();
-        $('#lib-bc-album').closest('li.dynamic').detach();
+        $('#lib-artists').hide();
+        $('#lib-albums').show();
+        $('#lib-songs').hide();
+        $('#lib-breadcrumb-album').closest('li.dynamic').detach();
         resize_components();
     });
     breadcrumbs.album.click(function(event) {
-        $('div.col-library.artists').hide();
-        $('div.col-library.albums').hide();
-        $('div.col-library.songs').show();
+        $('#lib-artists').hide();
+        $('#lib-albums').hide();
+        $('#lib-songs').show();
         resize_components();
     });
 }
 
 
 function init_xs_viewport() {
-    $('div.col-library.albums').hide();
-    $('div.col-library.songs').hide();
+    $('#lib-albums').hide();
+    $('#lib-songs').hide();
 }
 
 
 $(document).ready(function() {
     // update navigation
-    var attr = $('#nav-lib').attr('class');
-    $('#nav-lib').attr('class', attr + ' active');
+    var attr = $('#nav-library').attr('class');
+    $('#nav-library').attr('class', attr + ' active');
 
     attr = $('#quicknav-library').attr('class');
     $('#quicknav-library').attr('class', attr + ' btn-info');
 
     bind_breadcrumbs();
-    $('#lib-bc').append($('<li>').append(
+    $('#lib-breadcrumb').append($('<li>').append(
         breadcrumbs.home.text('Library')
     ));
     if (viewport == 'xs') {
@@ -297,9 +297,9 @@ $(document).ready(function() {
         if (viewport == 'xs') {
             init_xs_viewport();
         } else {
-            $('div.col-library.artists').show();
-            $('div.col-library.albums').show();
-            $('div.col-library.songs').show();
+            $('#lib-artists').show();
+            $('#lib-albums').show();
+            $('#lib-songs').show();
         }
     });
 

@@ -1,62 +1,17 @@
-.navbar-static-top {
+#navbar.navbar-static-top {
   margin-bottom: 0px;
 }
-.navbar-collapse > ul > li > p.navbar-text {
+#navbar .navbar-collapse > ul > li > p.navbar-text {
   margin-left: 15px;
 }
 #nav-lib-updating {
   display: none;
 }
 
-.container.playlist,
-.container.library > .col-library {
-  overflow: auto;
-}
-#playlist tbody tr,
-#playlist th.pl-rm,
-#playlist td.pl-rm,
-#lib-artists tbody tr,
-#lib-albums tbody tr,
-#lib-songs tbody tr {
-  cursor: pointer;
-}
-#library-nav {
-  margin: 0px;
-  padding: 0px;
-  width: 100%;
-}
-#lib-bc {
-  margin-bottom: 0px;
-  min-height: 36px;
-}
-
-
-#quicknav .btn {
-  border-radius: 0;
-}
-
-
-#currentsong {
-    overflow: auto;
-}
-#currentsong .jumbotron {
-    margin-bottom: 0px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-#currentsong .progress {
-    margin-top: 16px;
-    margin-bottom: 16px;
-}
-#currentsong .progress,
-#currentsong .progress-bar {
-    height: 6px;
-}
-
 
 #currentsong-mini.jumbotron {
-  margin-bottom: 6px;
-  padding-bottom: 0px;
+  margin-bottom: 0px;
+  padding-bottom: 6px;
   padding-top: 0px;
 }
 #currentsong-mini .progress,
@@ -73,3 +28,53 @@
     margin-top: 3px;
     margin-bottom: 3px;
 }
+
+
+#content,
+#content .content {
+  overflow: auto;
+}
+
+
+#quicknav .btn {
+  border-radius: 0;
+}
+
+
+#currentsong .jumbotron {
+    margin-bottom: 0px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+#currentsong .progress {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+#currentsong .progress,
+#currentsong .progress-bar {
+    height: 6px;
+}
+
+
+#playlist tbody tr,
+#playlist th.pl-rm,
+#playlist td.pl-rm {
+  cursor: pointer;
+}
+
+
+#lib-artists tbody tr,
+#lib-albums tbody tr,
+#lib-songs tbody tr {
+  cursor: pointer;
+}
+#lib-breadcrumbs {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+#lib-breadcrumb {
+  margin-bottom: 0px;
+  min-height: 36px;
+}
+

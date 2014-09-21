@@ -1,4 +1,4 @@
-function bind_clear_playlist() {
+function bind_clear_command() {
     $('#playlist thead tr th.pl-rm').click(function(event) {
         event.stopPropagation();
         $.get($SCRIPT_ROOT + '/mpd/clear');
@@ -38,27 +38,37 @@ function populate_playlist(playlistinfo) {
     });
     // hide the pos column
     $('#playlist tbody tr td.pl-pos').hide();
-    // bind play handler
-    $('#playlist tbody tr').click(function(event) {
-        var pos = $(this).find('td.pl-pos').text();
-        $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
-    });
-    // bind delete handler
-    $('#playlist tbody tr td.pl-rm').click(function(event) {
-        event.stopPropagation();
-        var pos = $(this).closest('tr').find('td.pl-pos').text();
-        $.get($SCRIPT_ROOT + '/mpd/delete?' + pos);
-    });
+    // bind handlers
+    $('#playlist tbody tr').click(on_song_clicked);
+    $('#playlist tbody tr td.pl-rm').click(on_song_delete_clicked);
+}
+
+
+function on_song_clicked(event) {
+    var pos = $(this).find('td.pl-pos').text();
+    $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
+}
+
+function on_song_delete_clicked(event) {
+    event.stopPropagation();
+    var pos = $(this).closest('tr').find('td.pl-pos').text();
+    $.get($SCRIPT_ROOT + '/mpd/delete?' + pos);
+}
+
+
+function update_navigation() {
+    var attr;
+    // navbar
+    attr = $('#nav-playlist').attr('class');
+    $('#nav-playlist').attr('class', attr + ' active');
+    // quicknav
+    attr = $('#quicknav-playlist').attr('class');
+    $('#quicknav-playlist').attr('class', attr + ' btn-info');
 }
 
 
 $(document).ready(function() {
-    // update navigation
-    var attr = $('#nav-playlist').attr('class');
-    $('#nav-playlist').attr('class', attr + ' active');
-
-    attr = $('#quicknav-playlist').attr('class');
-    $('#quicknav-playlist').attr('class', attr + ' btn-info');
-
-    bind_clear_playlist();
+    update_navigation();
+    bind_clear_command();
 });
+

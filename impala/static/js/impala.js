@@ -188,6 +188,12 @@ function resize_components() {
 
     $('#content').css('height', height);
     $('#content .content').css('height', height);
+
+    if (viewport == 'sm') {
+        var margin = 20;
+        $('#lib-albums').css('height', height/2-margin);
+        $('#lib-songs').css('height', height/2-margin);
+    }
 }
 
 function update_viewport_class() {

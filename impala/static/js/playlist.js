@@ -25,13 +25,15 @@ function populate_playlist(playlistinfo) {
     $.each(playlistinfo, function(i, song) {
         $('<tr>').append(
             $('<td class="pl-pos">').text(song.pos),
-            $('<td>').text(song.track),
+            $('<td class="no-stretch">').text(song.track),
             $('<td>').text(song.title),
             $('<td>').text(song.artist),
             $('<td>').text(song.album),
-            $('<td class="text-right">').text(song.date),
-            $('<td class="text-right">').text(seconds_to_str(song.time)),
-            $('<td class="pl-rm">').html(
+            $('<td class="no-stretch text-right">').text(song.date),
+            $('<td class="no-stretch text-right">').text(
+                seconds_to_str(song.time)
+            ),
+            $('<td class="pl-rm no-stretch">').html(
                 '<span class="glyphicon glyphicon-remove"></span>'
             )
         ).appendTo('#playlist');

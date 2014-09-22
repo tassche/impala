@@ -88,3 +88,10 @@
   min-height: 36px;
 }
 
+
+th.no-stretch,
+td.no-stretch {
+    width: 1%;
+    white-space: nowrap;
+}
+

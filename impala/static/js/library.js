@@ -60,9 +60,9 @@ function populate_artists(artists) {
         if (artist != '') {
             $('<tr>').append(
                 $('<td class="lib-artist-name">').text(artist),
-                $('<td class="lib-artist-add">')
+                $('<td class="lib-artist-add no-stretch">')
                     .html('<span class="glyphicon glyphicon-plus"></span>'),
-                $('<td class="lib-artist-play">')
+                $('<td class="lib-artist-play no-stretch">')
                     .html('<span class="glyphicon glyphicon-play"></span>')
             ).appendTo('#artists');
         }
@@ -87,11 +87,11 @@ function populate_albums(albums) {
         if (album.title != '') {
             $('<tr>').append(
                 $('<td class="lib-album-artist">').text(album.artist),
-                $('<td class="lib-album-date">').text(album.date),
+                $('<td class="lib-album-date no-stretch">').text(album.date),
                 $('<td class="lib-album-title">').text(album.title),
-                $('<td class="lib-album-add">')
+                $('<td class="lib-album-add no-stretch">')
                     .html('<span class="glyphicon glyphicon-plus"></span>'),
-                $('<td class="lib-album-play">')
+                $('<td class="lib-album-play no-stretch">')
                     .html('<span class="glyphicon glyphicon-play"></span>')
             ).appendTo('#albums');
         }
@@ -116,11 +116,11 @@ function populate_songs(songs) {
     // populate song table
     $.each(songs, function(i, song) {
         $('<tr>').append(
-            $('<td class="lib-song-track">').text(song.track),
+            $('<td class="lib-song-track no-stretch">').text(song.track),
             $('<td class="lib-song-title">').text(song.title),
-            $('<td class="lib-song-add">')
+            $('<td class="lib-song-add no-stretch">')
                 .html('<span class="glyphicon glyphicon-plus"></span>'),
-            $('<td class="lib-song-play">')
+            $('<td class="lib-song-play no-stretch">')
                 .html('<span class="glyphicon glyphicon-play"></span>'),
             $('<td class="lib-song-file">').text(song.file)
         ).appendTo('#songs');

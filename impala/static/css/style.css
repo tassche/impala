@@ -71,6 +71,9 @@
 #playlist td.pl-rm {
   cursor: pointer;
 }
+#playlist p {
+    margin-bottom: 0px;
+}
 
 
 #lib-artists tbody tr,

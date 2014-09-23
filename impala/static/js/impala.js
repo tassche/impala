@@ -191,8 +191,8 @@ function resize_components() {
 
     if (viewport == 'sm') {
         var margin = 20;
-        $('#lib-albums').css('height', height/2-margin);
-        $('#lib-songs').css('height', height/2-margin);
+        $('#lib-albums').css('height', (height-margin)/2);
+        $('#lib-songs').css('height', (height-margin)/2);
     }
 }
 

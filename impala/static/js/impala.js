@@ -179,9 +179,7 @@ $(document).ready(function() {
     bind_playback_controls();
     bind_playback_options();
     bind_volume_controls();
-    if (page != '/about') {
-        poll();
-    }
+    poll();
 });
 
 

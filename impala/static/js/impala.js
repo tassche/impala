@@ -181,10 +181,6 @@ $(document).ready(function() {
     bind_volume_controls();
     if (page != '/about') {
         poll();
-    } else {
-        // update navbar
-        var attr = $('#nav-about').attr('class');
-        $('#nav-about').attr('class', attr + ' active');
     }
 });
 

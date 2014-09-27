@@ -43,3 +43,7 @@
     {% endblock %}
 {% endblock %}
 
+{% block script %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/about.js') }}"></script>
+{% endblock %}

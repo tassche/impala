@@ -1,5 +1,5 @@
-#navbar.navbar-static-top {
-  margin-bottom: 0px;
+body {
+    padding-top: 50px;
 }
 #navbar .navbar-collapse > ul > li > p.navbar-text {
   margin-left: 15px;

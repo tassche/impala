@@ -179,7 +179,7 @@ function poll() {
 
 function resize_components() {
     var height = $(window).height();
-    height -= $('#navbar').outerHeight(true);
+    height -= 50; // body padding-top
     height -= $('#currentsong-mini').outerHeight(true);
     height -= $('#controls').outerHeight(true);
     height -= $('#quicknav').outerHeight(true);

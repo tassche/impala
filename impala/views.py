@@ -47,6 +47,10 @@ def redirect_on_error(func):
 def main():
     return render_template('currentsong.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/playlist')
 @redirect_on_error
 @mpdclient

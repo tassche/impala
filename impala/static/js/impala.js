@@ -223,7 +223,9 @@ $(document).ready(function() {
     bind_volume_controls();
     bind_nav_playlist_commands();
     bind_nav_database_commands();
-    poll();
+    if (page != '/about') {
+        poll();
+    }
     update_viewport_class();
     resize_components();
     $(window).resize(function() {

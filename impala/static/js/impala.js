@@ -225,6 +225,10 @@ $(document).ready(function() {
     bind_nav_database_commands();
     if (page != '/about') {
         poll();
+    } else {
+        // update navbar
+        var attr = $('#nav-about').attr('class');
+        $('#nav-about').attr('class', attr + ' active');
     }
     update_viewport_class();
     resize_components();

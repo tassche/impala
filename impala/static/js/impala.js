@@ -46,21 +46,6 @@ function bind_volume_controls() {
     });
 }
 
-function bind_nav_playlist_commands() {
-    $('#nav-pl-clear').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/clear');
-    });
-}
-
-function bind_nav_database_commands() {
-    $('#nav-lib-update').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/update');
-    });
-    $('#nav-lib-rescan').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/rescan');
-    });
-}
-
 
 function update_currentsong() {
     $.ajax({
@@ -194,8 +179,6 @@ $(document).ready(function() {
     bind_playback_controls();
     bind_playback_options();
     bind_volume_controls();
-    bind_nav_playlist_commands();
-    bind_nav_database_commands();
     if (page != '/about') {
         poll();
     } else {

@@ -27,6 +27,5 @@
 
 {% block script %}
     {{ super() }}
-    <script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
     <script src="{{ url_for('static', filename='js/impala.js') }}"></script>
 {% endblock %}

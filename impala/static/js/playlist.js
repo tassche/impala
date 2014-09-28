@@ -1,3 +1,9 @@
+// playlist.js //
+
+
+var playlist; // playlist version
+
+
 function bind_clear_command() {
     $('#playlist thead tr th.pl-rm').click(function(event) {
         event.stopPropagation();

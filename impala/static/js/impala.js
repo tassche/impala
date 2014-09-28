@@ -1,10 +1,9 @@
 // impala.js //
 // requires controls.js
+// requires playlist.js or library.js
 
 
 var page = window.location.pathname;
-
-var playlist; // playlist version
 var updating_db = false;
 
 
@@ -79,7 +78,7 @@ function on_poll_success(mpd_status) {
     volume = parseInt(mpd_status.volume);
     $('#status-volume').text(volume);
 
-    if (mpd_status.playlist != playlist && page == '/playlist') {
+    if (page == '/playlist' && mpd_status.playlist != playlist) {
         update_playlist(mpd_status.playlist);
     }
 

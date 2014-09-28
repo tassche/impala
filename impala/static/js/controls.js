@@ -48,6 +48,12 @@ function bind_volume_controls() {
 }
 
 
+function update_controls(mpd_status) {
+    volume = parseInt(mpd_status.volume);
+    $('#status-volume').text(volume);
+    update_playback_options(mpd_status);
+}
+
 function update_playback_options(mpd_status) {
     var options = ['consume', 'random', 'repeat', 'single'];
     $.each(options, function(i, option) {

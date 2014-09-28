@@ -74,10 +74,7 @@ function on_poll_success(mpd_status) {
         on_state_stop();
     }
 
-    update_playback_options(mpd_status);
-
-    volume = parseInt(mpd_status.volume);
-    $('#status-volume').text(volume);
+    update_controls(mpd_status);
 
     if (page == '/playlist' && mpd_status.playlist != playlist) {
         update_playlist(mpd_status.playlist);

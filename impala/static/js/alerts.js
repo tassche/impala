@@ -9,7 +9,8 @@ var alert_class = {
 };
 var alert_text = {
     db_update_in_progress: 'Database update in progress...',
-    db_update_finished:    'Database update finished.'
+    db_update_finished:    'Database update finished.',
+    added_to_playlist:     ' added to playlist.'
 };
 
 
@@ -19,6 +20,11 @@ function alert_db_update_in_progress() {
 
 function alert_db_update_finished() {
     alert_alert(alert_class.success, alert_text.db_update_finished);
+}
+
+function alert_added_to_playlist(what) {
+    alert_alert(alert_class.success, what + alert_text.added_to_playlist);
+    hide_alert();
 }
 
 

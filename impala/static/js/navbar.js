@@ -1,9 +1,14 @@
 // navbar.js //
+// requires alerts.js
 
 
 function bind_nav_playlist_commands() {
     $('#nav-pl-clear').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/clear');
+        $.ajax({
+            url: $SCRIPT_ROOT + '/mpd/clear',
+            dataType: 'text',
+            success: alert_playlist_cleared
+        });
     });
 }
 

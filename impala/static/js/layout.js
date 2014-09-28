@@ -1,3 +1,6 @@
+// layout.js //
+
+
 var viewport; // viewport class (xs, sm, md or lg)
 
 

@@ -1,4 +1,5 @@
 // impala.js //
+// requires layout.js
 // requires controls.js
 // requires playlist.js or library.js
 

@@ -1,3 +1,7 @@
+// library.js //
+// requires layout.js
+
+
 function Album(artist, date, title) {
     this.artist = (artist instanceof Array) ? artist[0] : artist;
     this.date = date;

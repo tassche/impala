@@ -1,4 +1,5 @@
 // playlist.js //
+// requires impala.js (helpers)
 
 
 var playlist; // playlist version

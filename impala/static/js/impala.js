@@ -1,3 +1,5 @@
+var page = window.location.pathname;
+
 var playback_options = {consume: 0, random: 0, repeat: 0, single: 0};
 var volume;
 var volume_off = 0; // allows to toggle mute

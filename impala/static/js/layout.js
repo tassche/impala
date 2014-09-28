@@ -1,4 +1,3 @@
-var page = window.location.pathname;
 var viewport; // viewport class (xs, sm, md or lg)
 
 

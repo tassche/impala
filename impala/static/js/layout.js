@@ -50,7 +50,6 @@ function update_viewport_class() {
 
 
 $(document).ready(function() {
-    $('#alert').hide();
     update_viewport_class();
     resize_components();
     $(window).resize(function() {

@@ -81,12 +81,22 @@ function on_poll_success(mpd_status) {
     }
 
     if (mpd_status.updating_db) {
-        $('#nav-lib-updating').show();
+        $('#alert').attr('class', 'alert alert-info');
+        $('#alert').text('Database update in progress...');
+        $('#alert').show();
+        resize_components();
         updating_db = true;
     } else {
-        $('#nav-lib-updating').hide();
         if (updating_db) {
+            $('#alert').attr('class', 'alert alert-success');
+            $('#alert').text('Database update finished.');
+            $('#alert').show();
+            resize_components();
             if (page == '/library') update_artists();
+            setTimeout(function() {
+                $('#alert').hide();
+                resize_components();
+            }, 3000);
             updating_db = false;
         }
     }

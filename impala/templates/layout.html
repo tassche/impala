@@ -4,6 +4,10 @@
 {% endblock %}
 
 {% block body %}
+    {% block alert %}
+        <div id="alert" class="alert"></div>
+    {% endblock %}
+
     {% block currentsong %}
         <div class="hidden-xs">
             {% include 'currentsong.inc.html' %}

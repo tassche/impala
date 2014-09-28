@@ -1,11 +1,12 @@
 body {
     padding-top: 50px;
 }
-#navbar .navbar-collapse > ul > li > p.navbar-text {
-  margin-left: 15px;
-}
-#nav-lib-updating {
-  display: none;
+
+
+#alert {
+    margin-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 

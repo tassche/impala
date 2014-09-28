@@ -7,6 +7,7 @@ var viewport; // viewport class (xs, sm, md or lg)
 function resize_components() {
     var height = $(window).height();
     height -= 50; // body padding-top
+    height -= $('#alert:visible').outerHeight(true);
     height -= $('#currentsong-mini').outerHeight(true);
     height -= $('#controls').outerHeight(true);
     height -= $('#quicknav').outerHeight(true);
@@ -29,6 +30,7 @@ function update_viewport_class() {
 
 
 $(document).ready(function() {
+    $('#alert').hide();
     update_viewport_class();
     resize_components();
     $(window).resize(function() {

@@ -86,7 +86,7 @@ function on_poll_success(mpd_status) {
     } else {
         $('#nav-lib-updating').hide();
         if (updating_db) {
-            if (page == '/library') update_library_artists();
+            if (page == '/library') update_artists();
             updating_db = false;
         }
     }

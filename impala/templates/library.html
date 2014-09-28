@@ -44,9 +44,7 @@
         <ol id="lib-breadcrumb" class="breadcrumb"></ol>
     </div>
 {% endblock %}
-{% block script %}
+{% block mpd_script %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/controls.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/impala.js') }}"></script>
     <script src="{{ url_for('static', filename='js/library.js') }}"></script>
 {% endblock %}

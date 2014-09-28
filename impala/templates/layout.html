@@ -33,6 +33,7 @@
     {{ super() }}
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/alerts.js') }}"></script>
     {% block mpd_script %}
         <script src="{{ url_for('static', filename='js/controls.js') }}"></script>
         <script src="{{ url_for('static', filename='js/impala.js') }}"></script>

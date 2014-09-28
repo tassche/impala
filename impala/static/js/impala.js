@@ -1,5 +1,6 @@
 // impala.js //
 // requires layout.js
+// requires alerts.js
 // requires controls.js
 // requires playlist.js or library.js
 
@@ -81,22 +82,13 @@ function on_poll_success(mpd_status) {
     }
 
     if (mpd_status.updating_db) {
-        $('#alert').attr('class', 'alert alert-info');
-        $('#alert').text('Database update in progress...');
-        $('#alert').show();
-        resize_components();
+        alert_db_update_in_progress();
         updating_db = true;
     } else {
         if (updating_db) {
-            $('#alert').attr('class', 'alert alert-success');
-            $('#alert').text('Database update finished.');
-            $('#alert').show();
-            resize_components();
+            alert_db_update_finished();
             if (page == '/library') update_artists();
-            setTimeout(function() {
-                $('#alert').hide();
-                resize_components();
-            }, 3000);
+            hide_alert();
             updating_db = false;
         }
     }

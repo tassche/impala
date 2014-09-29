@@ -31,14 +31,35 @@ body {
 }
 
 
-#currentsong-mini.jumbotron {
-  margin-bottom: 0px;
-  padding-bottom: 6px;
-  padding-top: 0px;
+#currentsong .jumbotron {
+    margin-bottom: 0px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
-#currentsong-mini .progress,
-#currentsong-mini .progress-bar {
+#currentsong .progress {
+    margin-top: 16px;
+    margin-bottom: 16px;
     height: 6px;
+}
+
+
+#currentsong-mini.jumbotron {
+    margin-bottom: 0px;
+    padding-bottom: 6px;
+    padding-top: 0px;
+}
+#currentsong-mini .progress {
+    height: 6px;
+}
+
+
+#currentsong .progress-bar[aria-valuenow="0"],
+#currentsong .progress-bar[aria-valuenow="1"],
+#currentsong .progress-bar[aria-valuenow="2"],
+#currentsong-mini .progress-bar[aria-valuenow="0"],
+#currentsong-mini .progress-bar[aria-valuenow="1"],
+#currentsong-mini .progress-bar[aria-valuenow="2"] {
+    min-width: 0px;
 }
 
 
@@ -54,7 +75,7 @@ body {
 
 #content,
 #content .content {
-  overflow: auto;
+    overflow: auto;
 }
 @media (max-width: 767px) {
     #content {
@@ -72,31 +93,14 @@ body {
 
 
 #quicknav .btn {
-  border-radius: 0;
-}
-
-
-#currentsong .jumbotron {
-    margin-bottom: 0px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-#currentsong .progress {
-    margin-top: 16px;
-    margin-bottom: 16px;
-    height: 6px;
-}
-#currentsong .progress-bar[aria-valuenow="0"],
-#currentsong .progress-bar[aria-valuenow="1"],
-#currentsong .progress-bar[aria-valuenow="2"] {
-    min-width: 0px;
+    border-radius: 0;
 }
 
 
 #playlist tbody tr,
 #playlist th.pl-rm,
 #playlist td.pl-rm {
-  cursor: pointer;
+    cursor: pointer;
 }
 #playlist p {
     margin-bottom: 0px;
@@ -106,7 +110,7 @@ body {
 #lib-artists tbody tr,
 #lib-albums tbody tr,
 #lib-songs tbody tr {
-  cursor: pointer;
+    cursor: pointer;
 }
 @media (min-width: 768px) and (max-width: 991px) {
     #lib-albums {
@@ -114,13 +118,13 @@ body {
     }
 }
 #lib-breadcrumbs {
-  margin: 0px;
-  padding: 0px;
-  width: 100%;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
 }
 #lib-breadcrumb {
-  margin-bottom: 0px;
-  min-height: 36px;
+    margin-bottom: 0px;
+    min-height: 36px;
 }
 
 

@@ -38,7 +38,7 @@ Album.prototype.equals = function(album) {
 
 function update_artists() {
     $.ajax({
-        url: $SCRIPT_ROOT + '/mpd/list?albumartist',
+        url: $SCRIPT_ROOT + '/mpd/list?' + artist_tag,
         dataType: 'json',
         success: populate_artists
     });
@@ -47,13 +47,13 @@ function update_artists() {
 function update_albums(artist) {
     $.ajax({
         url: $SCRIPT_ROOT + '/mpd/find?'
-            + 'albumartist=' + encodeURIComponent(artist),
+            + artist_tag + '=' + encodeURIComponent(artist),
         dataType: 'json',
         success: function(songs) {
             var albums = [], last_album; // js has no set object
             for (var i = 0; i < songs.length; i++) {
                 var album = new Album(
-                    songs[i].albumartist, songs[i].date, songs[i].album
+                    songs[i][artist_tag], songs[i].date, songs[i].album
                 );
                 if (!album.equals(last_album)) {
                     albums.push(album);
@@ -68,7 +68,7 @@ function update_albums(artist) {
 function update_songs(album) {
     $.ajax({
         url: $SCRIPT_ROOT + '/mpd/find?'
-            + 'albumartist=' + encodeURIComponent(album.artist)
+            + artist_tag + '=' + encodeURIComponent(album.artist)
             + '&album=' + encodeURIComponent(album.title)
             + '&date=' + encodeURIComponent(album.date),
         dataType: 'json',
@@ -182,7 +182,7 @@ function on_artist_add_clicked(event) {
     var artist = $(this).closest('tr').find('td.lib-artist-name').text();
     $.ajax({
         url: $SCRIPT_ROOT + '/mpd/findadd?'
-            + 'albumartist=' + encodeURIComponent(artist),
+            + artist_tag + '=' + encodeURIComponent(artist),
         dataType: 'text',
         success: function() {
             alert_added_to_playlist(artist);
@@ -192,7 +192,7 @@ function on_artist_add_clicked(event) {
 
 function on_artist_play_clicked(event) {
     var artist = $(this).closest('tr').find('td.lib-artist-name').text();
-    find_add_and_play('albumartist=' + encodeURIComponent(artist), artist);
+    find_add_and_play(artist_tag + '=' + encodeURIComponent(artist), artist);
 }
 
 function on_album_clicked(event) {
@@ -224,7 +224,7 @@ function on_album_add_clicked(event) {
     );
     $.ajax({
         url: $SCRIPT_ROOT + '/mpd/findadd?'
-            + 'albumartist=' + encodeURIComponent(album.artist)
+            + artist_tag + '=' + encodeURIComponent(album.artist)
             + '&album=' + encodeURIComponent(album.title)
             + '&date=' + encodeURIComponent(album.date),
         dataType: 'text',
@@ -241,7 +241,7 @@ function on_album_play_clicked(event) {
         $(this).closest('tr').find('td.lib-album-title').text()
     );
     find_add_and_play(
-        'albumartist=' + encodeURIComponent(album.artist) +
+        artist_tag + '=' + encodeURIComponent(album.artist) +
         '&album=' + encodeURIComponent(album.title) +
         '&date=' + encodeURIComponent(album.date),
         album.title + ' by ' + album.artist

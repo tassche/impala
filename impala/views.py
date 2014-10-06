@@ -18,8 +18,7 @@
 # along with Impala.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-from flask import flash, jsonify, render_template, request, url_for
-from flask import g, Response
+from flask import g, jsonify, render_template, request, Response
 from functools import wraps
 from impala import app, poller
 from werkzeug.exceptions import BadGateway, BadRequest
@@ -27,7 +26,9 @@ import json
 import logging
 import mpd
 
+
 logger = logging.getLogger(__name__)
+
 
 def mpdclient(func):
     @wraps(func)
@@ -51,6 +52,7 @@ def mpdclient(func):
         return response
     return wrapper
 
+
 def redirect_on_error(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -61,15 +63,18 @@ def redirect_on_error(func):
             return 'Error: %s' % e.description
     return wrapper
 
+
 @app.route('/')
 @redirect_on_error
 @mpdclient
 def main():
     return render_template('currentsong.html')
 
+
 @app.route('/about')
 def about():
     return render_template('about.html')
+
 
 @app.route('/playlist')
 @redirect_on_error
@@ -77,22 +82,26 @@ def about():
 def playlist():
     return render_template('playlist.html')
 
+
 @app.route('/library')
 @redirect_on_error
 @mpdclient
 def library():
     return render_template('library.html')
 
+
 @app.route('/status')
 @mpdclient
 def status():
     return render_template('mpd.html')
+
 
 _not_commands = (
     'close', 'connect', 'disconnect', 'password', 'noidle',
     'command_list_ok_begin', 'command_list_end', 'fileno',
     'add_command', 'remove_command',
 ) # these commands are not supported by the /mpd/<command> route
+
 
 def _build_args(request):
     args = list()
@@ -101,6 +110,7 @@ def _build_args(request):
         if v:
             args.append(v)
     return args
+
 
 @app.route('/mpd/<command>')
 @mpdclient
@@ -121,6 +131,7 @@ def mpd_command(command):
     except ValueError:
         # result is plain text (eg. addid command)
         return result
+
 
 @app.route('/poller/<command>')
 def mpd_poller(command):

@@ -343,16 +343,6 @@ function init_breadcrumbs() {
 }
 
 
-function update_navigation() {
-    var attr;
-    // navbar
-    attr = $('#nav-library').attr('class');
-    $('#nav-library').attr('class', attr + ' active');
-    // quicknav
-    attr = $('#quicknav-library').attr('class');
-    $('#quicknav-library').attr('class', attr + ' btn-info');
-}
-
 function init_viewport() {
     if (viewport == 'xs') {
         $('#lib-artists').show();
@@ -367,7 +357,6 @@ function init_viewport() {
 
 
 $(document).ready(function() {
-    update_navigation();
     update_artists();
     init_breadcrumbs();
     init_viewport();

@@ -51,6 +51,16 @@
 
 {% block script %}
     {{ super() }}
+    <script>
+    {% if active_navbar_element is defined %}
+        var active_navbar_element = $('{{ active_navbar_element|safe }}');
+    {% endif %}
+
+    {% if active_quicknav_element is defined %}
+        var active_quicknav_element = $('{{ active_quicknav_element|safe }}');
+    {% endif %}
+    </script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
     <script src="{{ url_for('static', filename='js/alerts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
@@ -59,3 +69,4 @@
         <script src="{{ url_for('static', filename='js/impala.js') }}"></script>
     {% endblock %}
 {% endblock %}
+

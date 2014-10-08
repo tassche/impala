@@ -93,19 +93,7 @@ function on_song_delete_clicked(event) {
 }
 
 
-function update_navigation() {
-    var attr;
-    // navbar
-    attr = $('#nav-playlist').attr('class');
-    $('#nav-playlist').attr('class', attr + ' active');
-    // quicknav
-    attr = $('#quicknav-playlist').attr('class');
-    $('#quicknav-playlist').attr('class', attr + ' btn-info');
-}
-
-
 $(document).ready(function() {
-    update_navigation();
     bind_clear_command();
 });
 

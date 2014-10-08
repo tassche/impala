@@ -44,7 +44,3 @@
     {% include 'controls.inc.html' %}
 {% endblock %}
 
-{% block mpd_script %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/currentsong.js') }}"></script>
-{% endblock %}

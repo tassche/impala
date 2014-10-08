@@ -68,26 +68,40 @@ def redirect_on_error(func):
 @redirect_on_error
 @mpdclient
 def main():
-    return render_template('currentsong.html')
+    context = {
+        'active_quicknav_element': '#quicknav-currentsong',
+    }
+    return render_template('currentsong.html', **context)
 
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    context = {
+        'active_navbar_element': '#nav-about',
+    }
+    return render_template('about.html', **context)
 
 
 @app.route('/playlist')
 @redirect_on_error
 @mpdclient
 def playlist():
-    return render_template('playlist.html')
+    context = {
+        'active_navbar_element': '#nav-playlist',
+        'active_quicknav_element': '#quicknav-playlist',
+    }
+    return render_template('playlist.html', **context)
 
 
 @app.route('/library')
 @redirect_on_error
 @mpdclient
 def library():
-    return render_template('library.html')
+    context = {
+        'active_navbar_element': '#nav-library',
+        'active_quicknav_element': '#quicknav-library',
+    }
+    return render_template('library.html', **context)
 
 
 @app.route('/status')

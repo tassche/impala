@@ -18,15 +18,28 @@
  * along with Impala.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// currentsong.js //
+// common.js //
 
+
+function style_active_navbar_element(element) {
+    element.attr('class', element.attr('class') + ' active');
+}
+
+function style_active_quicknav_element(element) {
+    element.attr('class', element.attr('class') + ' btn-info');
+}
 
 function update_navigation() {
-    var attr = $('#quicknav-currentsong').attr('class');
-    $('#quicknav-currentsong').attr('class', attr + ' btn-info');
+    if (typeof active_navbar_element !== 'undefined') {
+        style_active_navbar_element(active_navbar_element);
+    }
+    if (typeof active_quicknav_element !== 'undefined') {
+        style_active_quicknav_element(active_quicknav_element);
+    }
 }
 
 
 $(document).ready(function() {
     update_navigation();
 });
+

@@ -62,7 +62,7 @@
     </script>
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     {% block mpd_script %}
-        <script src="{{ url_for('static', filename='js/impala.js') }}"></script>
+        <script>$(document).ready(poll);</script>
     {% endblock %}
 {% endblock %}
 

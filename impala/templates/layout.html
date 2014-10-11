@@ -51,16 +51,16 @@
 
 {% block script %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script>
     {% if active_navbar_element is defined %}
-        var active_navbar_element = $('{{ active_navbar_element|safe }}');
+        NAVBAR.active_element = $('{{ active_navbar_element|safe }}');
     {% endif %}
 
     {% if active_quicknav_element is defined %}
-        var active_quicknav_element = $('{{ active_quicknav_element|safe }}');
+        QUICKNAV.active_element = $('{{ active_quicknav_element|safe }}');
     {% endif %}
     </script>
-    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     {% block mpd_script %}
         <script>$(document).ready(poll);</script>
     {% endblock %}

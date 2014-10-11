@@ -102,40 +102,47 @@ function update_viewport_class() {
 
 /// NAVIGATION ///
 
-function bind_nav_playlist_commands() {
-    $('#nav-pl-clear').click(function(event) {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/clear',
-            dataType: 'text',
-            success: alert_playlist_cleared
+NAVBAR = {
+    active_element: undefined,
+
+    init: function() {
+        NAVBAR.bind_playlist_commands();
+        NAVBAR.bind_database_commands();
+    },
+
+    bind_playlist_commands: function() {
+        $('#nav-pl-clear').click(function(event) {
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/clear',
+                dataType: 'text',
+                success: alert_playlist_cleared
+            });
         });
-    });
-}
+    },
 
-function bind_nav_database_commands() {
-    $('#nav-lib-update').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/update');
-    });
-    $('#nav-lib-rescan').click(function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/rescan');
-    });
-}
+    bind_database_commands: function() {
+        $('#nav-lib-update').click(function(event) {
+            $.get($SCRIPT_ROOT + '/mpd/update');
+        });
+        $('#nav-lib-rescan').click(function(event) {
+            $.get($SCRIPT_ROOT + '/mpd/rescan');
+        });
+    },
 
-
-function style_active_navbar_element(element) {
-    element.attr('class', element.attr('class') + ' active');
-}
-
-function style_active_quicknav_element(element) {
-    element.attr('class', element.attr('class') + ' btn-info');
-}
-
-function update_navigation() {
-    if (typeof active_navbar_element !== 'undefined') {
-        style_active_navbar_element(active_navbar_element);
+    update: function() {
+        if (typeof NAVBAR.active_element !== 'undefined') {
+            append_css_class(NAVBAR.active_element, 'active');
+        }
     }
-    if (typeof active_quicknav_element !== 'undefined') {
-        style_active_quicknav_element(active_quicknav_element);
+}
+
+QUICKNAV = {
+    active_element: undefined,
+
+    update: function() {
+        if (typeof QUICKNAV.active_element !== 'undefined') {
+            append_css_class(QUICKNAV.active_element, 'btn-info');
+        }
     }
 }
 
@@ -329,9 +336,10 @@ function poll() {
 
 
 $(document).ready(function() {
-    bind_nav_playlist_commands();
-    bind_nav_database_commands();
-    update_navigation();
+    NAVBAR.init();
+    NAVBAR.update();
+
+    QUICKNAV.update();
 
     update_viewport_class();
     resize_components();
@@ -380,5 +388,9 @@ function seconds_to_str(seconds) {
         str = d.toString() + 'd ' + str;
     }
     return str;
+}
+
+function append_css_class(element, css_class) {
+    element.attr('class', element.attr('class') + ' ' + css_class);
 }
 

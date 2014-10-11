@@ -316,7 +316,7 @@ POLLER = {
     },
 
     on_poll_error: function() {
-        POLLER.on_status_stop();
+        POLLER.on_state_stop();
     },
 
     poll: function() {

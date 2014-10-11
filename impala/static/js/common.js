@@ -177,6 +177,35 @@ CURRENTSONG = {
     }
 }
 
+STATUS = {
+    update: function(mpd_status) {
+        if (typeof mpd_status !== 'undefined') {
+            STATUS.update_bitrate(mpd_status.bitrate);
+            STATUS.update_time(mpd_status.time);
+        } else {
+            STATUS.update_bitrate();
+            STATUS.update_time();
+        }
+    },
+
+    update_bitrate: function(bitrate) {
+        $('#status-bitrate').text(bitrate || '0');
+    },
+
+    update_time: function(time) {
+        if (typeof time === 'undefined') time = '0:0';
+
+        time = time.split(':');
+        $('#time-elapsed').text(seconds_to_str(time[0]));
+        $('#time-total').text(seconds_to_str(time[1]));
+
+        var progress = time[0] / time[1] * 100;
+        $('#time-progress').css('width', progress+'%')
+            .attr('aria-valuenow', time[0])
+            .attr('aria-valuemax', time[1]);
+    }
+}
+
 CONTROLS = {
     playback_options: {consume: 0, random: 0, repeat: 0, single: 0},
     volume: -1,
@@ -261,17 +290,6 @@ POLLER = {
     updating_db: false,
 
     on_state_play: function(mpd_status) {
-        $('#status-bitrate').text(mpd_status.bitrate);
-
-        var time = mpd_status.time.split(':');
-        $('#time-elapsed').text(seconds_to_str(time[0]));
-        $('#time-total').text(seconds_to_str(time[1]));
-
-        var progress = time[0] / time[1] * 100;
-        $('#time-progress').css('width', progress+'%')
-            .attr('aria-valuenow', time[0])
-            .attr('aria-valuemax', time[1]);
-
         $('#playlist tbody tr').removeAttr('style');
         $('#playlist tbody tr td.pl-pos').filter(function() {
             return $(this).text() == mpd_status.song;
@@ -279,25 +297,19 @@ POLLER = {
     },
 
     on_state_stop: function() {
-        CURRENTSONG.update();
-
-        $('#status-bitrate').text('0');
-
-        $('#time-elapsed').text('00:00');
-        $('#time-total').text('00:00');
-
-        $('#time-progress').css('width', 0)
-            .attr('aria-valuenow', 0)
-            .attr('aria-valuemax', 0);
-
         $('#playlist tbody tr').removeAttr('style');
     },
 
     on_poll_success: function(mpd_status) {
         if (mpd_status.state != 'stop') {
             CURRENTSONG.fetch();
+            STATUS.update(mpd_status);
+
             POLLER.on_state_play(mpd_status);
         } else {
+            CURRENTSONG.update();
+            STATUS.update();
+
             POLLER.on_state_stop();
         }
 
@@ -321,6 +333,9 @@ POLLER = {
     },
 
     on_poll_error: function() {
+        CURRENTSONG.update();
+        STATUS.update();
+
         POLLER.on_state_stop();
     },
 

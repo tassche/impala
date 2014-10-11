@@ -171,10 +171,10 @@ function on_artist_clicked(event) {
         $('<li class="dynamic">').append(breadcrumbs.artist.text(artist))
     );
     // update viewport
-    if (viewport == 'xs') {
+    if (LAYOUT.viewport == 'xs') {
         $('#lib-artists').hide();
         $('#lib-albums').show();
-        resize_components();
+        LAYOUT.resize_components();
     }
 }
 
@@ -209,10 +209,10 @@ function on_album_clicked(event) {
         $('<li class="dynamic">').append(breadcrumbs.album.text(album.title))
     );
     // update viewport
-    if (viewport == 'xs') {
+    if (LAYOUT.viewport == 'xs') {
         $('#lib-albums').hide();
         $('#lib-songs').show();
-        resize_components();
+        LAYOUT.resize_components();
     }
 }
 
@@ -325,26 +325,26 @@ function init_breadcrumbs() {
         $('#lib-albums').hide();
         $('#lib-songs').hide();
         $('li.dynamic').detach();
-        resize_components();
+        LAYOUT.resize_components();
     });
     breadcrumbs.artist.click(function(event) {
         $('#lib-artists').hide();
         $('#lib-albums').show();
         $('#lib-songs').hide();
         $('#lib-breadcrumb-album').closest('li.dynamic').detach();
-        resize_components();
+        LAYOUT.resize_components();
     });
     breadcrumbs.album.click(function(event) {
         $('#lib-artists').hide();
         $('#lib-albums').hide();
         $('#lib-songs').show();
-        resize_components();
+        LAYOUT.resize_components();
     });
 }
 
 
 function init_viewport() {
-    if (viewport == 'xs') {
+    if (LAYOUT.viewport == 'xs') {
         $('#lib-artists').show();
         $('#lib-albums').hide();
         $('#lib-songs').hide();

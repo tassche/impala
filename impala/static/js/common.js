@@ -59,48 +59,51 @@ function alert_alert(css_class, text) {
     alert_div.attr('class', css_class);
     alert_div.text(text);
     alert_div.show();
-    resize_components();
+    LAYOUT.resize_components();
 }
 
 function hide_alert() {
     setTimeout(function() {
         alert_div.hide();
-        resize_components();
+        LAYOUT.resize_components();
     }, 3000);
 }
 
 
-/// LAYOUT ///
+LAYOUT = {
+    viewport: undefined, // viewport class (xs, sm, md or lg)
 
-var viewport; // viewport class (xs, sm, md or lg)
+    init: function() {
+        LAYOUT.viewport = get_viewport_class();
+        LAYOUT.resize_components();
 
+        $(window).resize(function() {
+            LAYOUT.viewport = get_viewport_class();
+            LAYOUT.resize_components();
+        });
+    },
 
-function resize_components() {
-    var height = $(window).height();
-    height -= 50; // body padding-top
-    height -= $('#alert:visible').outerHeight(true);
-    height -= $('#currentsong-mini').outerHeight(true);
-    height -= $('#controls').outerHeight(true);
-    height -= $('#quicknav').outerHeight(true);
+    resize_components: function() {
+        var height = $(window).height();
 
-    height -= $('#lib-breadcrumbs').outerHeight(true);
+        height -= 50; // body padding-top
+        height -= $('#alert:visible').outerHeight(true);
+        height -= $('#currentsong-mini').outerHeight(true);
+        height -= $('#controls').outerHeight(true);
+        height -= $('#quicknav').outerHeight(true);
 
-    $('#content').css('height', height);
-    $('#content .content').css('height', height);
+        height -= $('#lib-breadcrumbs').outerHeight(true);
 
-    if (viewport == 'sm') {
-        var margin = 20;
-        $('#lib-albums').css('height', (height-margin)/2);
-        $('#lib-songs').css('height', (height-margin)/2);
+        $('#content').css('height', height);
+        $('#content .content').css('height', height);
+
+        if (LAYOUT.viewport == 'sm') {
+            var margin = 20;
+            $('#lib-albums').css('height', (height-margin)/2);
+            $('#lib-songs').css('height', (height-margin)/2);
+        }
     }
 }
-
-function update_viewport_class() {
-    viewport = get_viewport_class();
-}
-
-
-/// NAVIGATION ///
 
 NAVBAR = {
     active_element: undefined,
@@ -241,7 +244,7 @@ function update_currentsong() {
             $('#currentsong-album').text('');
             $('#currentsong-date').text('');
         },
-        complete: resize_components
+        complete: LAYOUT.resize_components
     });
 }
 
@@ -341,12 +344,7 @@ $(document).ready(function() {
 
     QUICKNAV.update();
 
-    update_viewport_class();
-    resize_components();
-    $(window).resize(function() {
-        update_viewport_class();
-        resize_components();
-    });
+    LAYOUT.init();
 
     bind_playback_controls();
     bind_playback_options();

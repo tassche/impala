@@ -149,76 +149,83 @@ QUICKNAV = {
     }
 }
 
+CONTROLS = {
+    playback_options: {consume: 0, random: 0, repeat: 0, single: 0},
+    volume: -1,
+    volume_off: 0, // allows to toggle mute
 
-/// CONTROLS ///
+    init: function() {
+        CONTROLS.bind_playback_controls();
+        CONTROLS.bind_playback_options();
+        CONTROLS.bind_volume_controls();
+    },
 
-var playback_options = {consume: 0, random: 0, repeat: 0, single: 0};
-var volume;
-var volume_off = 0; // allows to toggle mute
-
-
-function bind_playback_controls() {
-    var elements = [
-        ['#play', 'play'],
-        ['#pause', 'pause?1'],
-        ['#stop', 'stop'],
-        ['#previous', 'previous'],
-        ['#next', 'next']
-    ];
-    $.each(elements, function(i, element) {
-        $(element[0]).click(function(event) {
-            $.get($SCRIPT_ROOT + '/mpd/' + element[1]);
+    bind_playback_controls: function() {
+        var elements = [
+            ['#play', 'play'],
+            ['#pause', 'pause?1'],
+            ['#stop', 'stop'],
+            ['#previous', 'previous'],
+            ['#next', 'next']
+        ];
+        $.each(elements, function(i, element) {
+            $(element[0]).click(function(event) {
+                $.get($SCRIPT_ROOT + '/mpd/' + element[1]);
+            });
         });
-    });
-}
+    },
 
-function bind_playback_options() {
-    var options = ['consume', 'random', 'repeat', 'single'];
-    $.each(options, function(i, option) {
-        $('#' + option).click(function(event) {
-            var state = (playback_options[option] > 0) ? 0 : 1;
-            $.get($SCRIPT_ROOT + '/mpd/' + option + '?' + state);
+    bind_playback_options: function() {
+        var options = ['consume', 'random', 'repeat', 'single'];
+        $.each(options, function(i, option) {
+            $('#' + option).click(function(event) {
+                var state = (CONTROLS.playback_options[option] > 0) ? 0 : 1;
+                $.get($SCRIPT_ROOT + '/mpd/' + option + '?' + state);
+            });
         });
-    });
-}
+    },
 
-function bind_volume_controls() {
-    $('#volume-down').click(function(event) {
-        var new_volume = (volume < 5) ? 0 : volume-5;
-        $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
-    });
-    $('#volume-up').click(function(event) {
-        var new_volume = (volume > 95) ? 100 : volume+5;
-        $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
-    });
-    $('#volume-off').click(function(event) {
-        new_volume = (volume_off > 0) ? volume_off : 0;
-        volume_off = (volume_off > 0) ? 0 : volume;
-        $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
-    });
-}
+    bind_volume_controls: function() {
+        $('#volume-down').click(function(event) {
+            var new_volume = (CONTROLS.volume < 5) ? 0 : CONTROLS.volume-5;
+            $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+        });
+        $('#volume-up').click(function(event) {
+            var new_volume = (CONTROLS.volume > 95) ? 100 : CONTROLS.volume+5;
+            $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+        });
+        $('#volume-off').click(function(event) {
+            new_volume = (CONTROLS.volume_off > 0) ? CONTROLS.volume_off : 0;
+            CONTROLS.volume_off = (CONTROLS.volume_off > 0) ? 0 : CONTROLS.volume;
+            $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+        });
+    },
 
+    update: function(mpd_status) {
+        CONTROLS.volume = parseInt(mpd_status.volume);
+        CONTROLS.update_playback_options(mpd_status);
+        CONTROLS.update_volume_label(CONTROLS.volume);
+    },
 
-function update_controls(mpd_status) {
-    volume = parseInt(mpd_status.volume);
-    $('#status-volume').text(volume);
-    update_playback_options(mpd_status);
-}
-
-function update_playback_options(mpd_status) {
-    var options = ['consume', 'random', 'repeat', 'single'];
-    $.each(options, function(i, option) {
-        playback_options[option] = parseInt(mpd_status[option]);
-        var attr = $('#' + option).attr('class');
-        if (playback_options[option] > 0) {
-            $('#' + option).attr('class', attr + ' btn-info');
-        } else {
-            var index = attr.indexOf(' btn-info');
-            if (index > -1) {
-                $('#' + option).attr('class', attr.substring(0, index));
+    update_playback_options: function(mpd_status) {
+        var options = ['consume', 'random', 'repeat', 'single'];
+        $.each(options, function(i, option) {
+            CONTROLS.playback_options[option] = parseInt(mpd_status[option]);
+            var attr = $('#' + option).attr('class');
+            if (CONTROLS.playback_options[option] > 0) {
+                $('#' + option).attr('class', attr + ' btn-info');
+            } else {
+                var index = attr.indexOf(' btn-info');
+                if (index > -1) {
+                    $('#' + option).attr('class', attr.substring(0, index));
+                }
             }
-        }
-    });
+        });
+    },
+
+    update_volume_label: function(volume) {
+        $('#status-volume').text(volume);
+    }
 }
 
 
@@ -294,7 +301,7 @@ function on_poll_success(mpd_status) {
         on_state_stop();
     }
 
-    update_controls(mpd_status);
+    CONTROLS.update(mpd_status);
 
     if (page == '/playlist' && mpd_status.playlist != playlist) {
         update_playlist(mpd_status.playlist);
@@ -346,9 +353,7 @@ $(document).ready(function() {
 
     LAYOUT.init();
 
-    bind_playback_controls();
-    bind_playback_options();
-    bind_volume_controls();
+    CONTROLS.init();
 });
 
 

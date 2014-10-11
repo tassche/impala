@@ -149,6 +149,34 @@ QUICKNAV = {
     }
 }
 
+CURRENTSONG = {
+    fetch: function() {
+        $.ajax({
+            url: $SCRIPT_ROOT + '/poller/currentsong',
+            dataType: 'json',
+            success: CURRENTSONG.update,
+            error: function() {
+                CURRENTSONG.update();
+            },
+            complete: LAYOUT.resize_components
+        });
+    },
+
+    update: function(currentsong) {
+        if (typeof currentsong !== 'undefined') {
+            $('#currentsong-artist').text(currentsong.artist);
+            $('#currentsong-title').text(currentsong.title);
+            $('#currentsong-album').text(currentsong.album);
+            $('#currentsong-date').text(currentsong.date);
+        } else {
+            $('#currentsong-artist').text('');
+            $('#currentsong-title').text('');
+            $('#currentsong-album').text('');
+            $('#currentsong-date').text('');
+        }
+    }
+}
+
 CONTROLS = {
     playback_options: {consume: 0, random: 0, repeat: 0, single: 0},
     volume: -1,
@@ -232,26 +260,6 @@ POLLER = {
     page: window.location.pathname,
     updating_db: false,
 
-    update_currentsong: function() {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/poller/currentsong',
-            dataType: 'json',
-            success: function(currentsong) {
-                $('#currentsong-artist').text(currentsong.artist);
-                $('#currentsong-title').text(currentsong.title);
-                $('#currentsong-album').text(currentsong.album);
-                $('#currentsong-date').text(currentsong.date);
-            },
-            error: function() {
-                $('#currentsong-artist').text('');
-                $('#currentsong-title').text('');
-                $('#currentsong-album').text('');
-                $('#currentsong-date').text('');
-            },
-            complete: LAYOUT.resize_components
-        });
-    },
-
     on_state_play: function(mpd_status) {
         $('#status-bitrate').text(mpd_status.bitrate);
 
@@ -271,10 +279,7 @@ POLLER = {
     },
 
     on_state_stop: function() {
-        $('#currentsong-artist').text('');
-        $('#currentsong-title').text('');
-        $('#currentsong-album').text('');
-        $('#currentsong-date').text('');
+        CURRENTSONG.update();
 
         $('#status-bitrate').text('0');
 
@@ -290,7 +295,7 @@ POLLER = {
 
     on_poll_success: function(mpd_status) {
         if (mpd_status.state != 'stop') {
-            POLLER.update_currentsong();
+            CURRENTSONG.fetch();
             POLLER.on_state_play(mpd_status);
         } else {
             POLLER.on_state_stop();

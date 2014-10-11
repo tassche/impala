@@ -99,19 +99,6 @@ function update_viewport_class() {
     viewport = get_viewport_class();
 }
 
-function get_viewport_class() {
-    var w = window.outerWidth;
-    if (w < 768) {
-        return 'xs';
-    } else if (w < 992) {
-        return 'sm';
-    } else if (w < 1200) {
-        return 'md';
-    } else {
-        return 'lg';
-    }
-}
-
 
 /// NAVIGATION ///
 
@@ -361,6 +348,19 @@ $(document).ready(function() {
 
 
 /// HELPERS ///
+
+function get_viewport_class() {
+    var w = window.outerWidth;
+    if (w < 768) {
+        return 'xs';
+    } else if (w < 992) {
+        return 'sm';
+    } else if (w < 1200) {
+        return 'md';
+    } else {
+        return 'lg';
+    }
+}
 
 function seconds_to_dhms(seconds) {
     var m = parseInt(seconds/60), s = seconds%60;

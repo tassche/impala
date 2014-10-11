@@ -40,5 +40,5 @@
 {% endblock %}
 {% block mpd_script %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/playlist.js') }}"></script>
+    <script>$(document).ready(PLAYLIST.init);</script>
 {% endblock %}

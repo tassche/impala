@@ -609,9 +609,6 @@ LIBRARY = {
         $('#songs tbody tr td.lib-song-add').click(
             LIBRARY.on_song_add_clicked
         );
-        $('#songs tbody tr td.lib-song-play').click(
-            LIBRARY.on_song_play_clicked
-        );
     },
 
     on_artist_clicked: function(event) {
@@ -708,11 +705,9 @@ LIBRARY = {
     },
 
     on_song_clicked: function(event) {
-        event.stopPropagation();
         var artist = $(this).closest('tr').find('td.lib-song-artist').text();
         var title = $(this).closest('tr').find('td.lib-song-title').text();
         var file = $(this).closest('tr').find('td.lib-song-file').text();
-        console.log(file);
         LIBRARY.add_and_play(file, title + ' by ' + artist);
     },
 
@@ -728,11 +723,6 @@ LIBRARY = {
                 alert_added_to_playlist(title + ' by ' + artist);
             }
         });
-    },
-
-    on_song_play_clicked: function(event) {
-        // FIXME
-        LIBRARY.on_song_clicked(event);
     },
 
     add_and_play: function(file, alert_what) {

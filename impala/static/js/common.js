@@ -429,42 +429,62 @@ PLAYLIST = {
 
 LIBRARY = {
     breadcrumbs: {
-        home: $('<a id="lib-breadcrumb-home" href="#">'),
-        artist: $('<a id="lib-breadcrumb-artist" href="#">'),
-        album: $('<a id="lib-breadcrumb-album" href="#">')
+        elements: {
+            home: $('<a id="lib-breadcrumb-home" href="#">'),
+            artist: $('<a id="lib-breadcrumb-artist" href="#">'),
+            album: $('<a id="lib-breadcrumb-album" href="#">')
+        },
+
+        init: function() {
+            $('#lib-breadcrumb').append($('<li>').append(
+                LIBRARY.breadcrumbs.elements.home.text('Library')
+            ));
+            LIBRARY.breadcrumbs.elements.home.click(function(event) {
+                $('#lib-artists').show();
+                $('#lib-albums').hide();
+                $('#lib-songs').hide();
+                $('li.dynamic').detach();
+                LAYOUT.resize_components();
+            });
+            LIBRARY.breadcrumbs.elements.artist.click(function(event) {
+                $('#lib-artists').hide();
+                $('#lib-albums').show();
+                $('#lib-songs').hide();
+                $('#lib-breadcrumb-album').closest('li.dynamic').detach();
+                LAYOUT.resize_components();
+            });
+            LIBRARY.breadcrumbs.elements.album.click(function(event) {
+                $('#lib-artists').hide();
+                $('#lib-albums').hide();
+                $('#lib-songs').show();
+                LAYOUT.resize_components();
+            });
+        },
+
+        set_artist: function(artist) {
+            $('li.dynamic').detach();
+            $('#lib-breadcrumb').append(
+                $('<li class="dynamic">').append(
+                    LIBRARY.breadcrumbs.elements.artist.text(artist)
+                )
+            );
+        },
+
+        set_album: function(album) {
+            $('#lib-breadcrumb-album').closest('li.dynamic').detach();
+            $('#lib-breadcrumb').append(
+                $('<li class="dynamic">').append(
+                    LIBRARY.breadcrumbs.elements.album.text(album)
+                )
+            );
+        }
     },
 
     init: function() {
         LIBRARY.update_artists();
-        LIBRARY.init_breadcrumbs();
+        LIBRARY.breadcrumbs.init();
         LIBRARY.init_viewport();
         $(window).resize(LIBRARY.init_viewport);
-    },
-
-    init_breadcrumbs: function() {
-        $('#lib-breadcrumb').append($('<li>').append(
-            LIBRARY.breadcrumbs.home.text('Library')
-        ));
-        LIBRARY.breadcrumbs.home.click(function(event) {
-            $('#lib-artists').show();
-            $('#lib-albums').hide();
-            $('#lib-songs').hide();
-            $('li.dynamic').detach();
-            LAYOUT.resize_components();
-        });
-        LIBRARY.breadcrumbs.artist.click(function(event) {
-            $('#lib-artists').hide();
-            $('#lib-albums').show();
-            $('#lib-songs').hide();
-            $('#lib-breadcrumb-album').closest('li.dynamic').detach();
-            LAYOUT.resize_components();
-        });
-        LIBRARY.breadcrumbs.album.click(function(event) {
-            $('#lib-artists').hide();
-            $('#lib-albums').hide();
-            $('#lib-songs').show();
-            LAYOUT.resize_components();
-        });
     },
 
     init_viewport: function() {
@@ -616,12 +636,7 @@ LIBRARY = {
         // update albums
         LIBRARY.update_albums(artist);
         // update breadcrumbs
-        $('li.dynamic').detach();
-        $('#lib-breadcrumb').append(
-            $('<li class="dynamic">').append(
-                LIBRARY.breadcrumbs.artist.text(artist)
-            )
-        );
+        LIBRARY.breadcrumbs.set_artist(artist);
         // update viewport
         if (LAYOUT.viewport == 'xs') {
             $('#lib-artists').hide();
@@ -658,12 +673,7 @@ LIBRARY = {
         // update songs
         LIBRARY.update_songs(album);
         // update breadcrumbs
-        $('#lib-breadcrumb-album').closest('li.dynamic').detach();
-        $('#lib-breadcrumb').append(
-            $('<li class="dynamic">').append(
-                LIBRARY.breadcrumbs.album.text(album.title)
-            )
-        );
+        LIBRARY.breadcrumbs.set_album(album.title);
         // update viewport
         if (LAYOUT.viewport == 'xs') {
             $('#lib-albums').hide();

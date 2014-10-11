@@ -228,119 +228,115 @@ CONTROLS = {
     }
 }
 
+POLLER = {
+    page: window.location.pathname,
+    updating_db: false,
 
-/// POLLING ///
+    update_currentsong: function() {
+        $.ajax({
+            url: $SCRIPT_ROOT + '/poller/currentsong',
+            dataType: 'json',
+            success: function(currentsong) {
+                $('#currentsong-artist').text(currentsong.artist);
+                $('#currentsong-title').text(currentsong.title);
+                $('#currentsong-album').text(currentsong.album);
+                $('#currentsong-date').text(currentsong.date);
+            },
+            error: function() {
+                $('#currentsong-artist').text('');
+                $('#currentsong-title').text('');
+                $('#currentsong-album').text('');
+                $('#currentsong-date').text('');
+            },
+            complete: LAYOUT.resize_components
+        });
+    },
 
-var page = window.location.pathname;
-var updating_db = false;
+    on_state_play: function(mpd_status) {
+        $('#status-bitrate').text(mpd_status.bitrate);
 
+        var time = mpd_status.time.split(':');
+        $('#time-elapsed').text(seconds_to_str(time[0]));
+        $('#time-total').text(seconds_to_str(time[1]));
 
-function update_currentsong() {
-    $.ajax({
-        url: $SCRIPT_ROOT + '/poller/currentsong',
-        dataType: 'json',
-        success: function(currentsong) {
-            $('#currentsong-artist').text(currentsong.artist);
-            $('#currentsong-title').text(currentsong.title);
-            $('#currentsong-album').text(currentsong.album);
-            $('#currentsong-date').text(currentsong.date);
-        },
-        error: function() {
-            $('#currentsong-artist').text('');
-            $('#currentsong-title').text('');
-            $('#currentsong-album').text('');
-            $('#currentsong-date').text('');
-        },
-        complete: LAYOUT.resize_components
-    });
-}
+        var progress = time[0] / time[1] * 100;
+        $('#time-progress').css('width', progress+'%')
+            .attr('aria-valuenow', time[0])
+            .attr('aria-valuemax', time[1]);
 
+        $('#playlist tbody tr').removeAttr('style');
+        $('#playlist tbody tr td.pl-pos').filter(function() {
+            return $(this).text() == mpd_status.song;
+        }).closest('tr').css('font-weight', 'bold');
+    },
 
-function on_state_play(mpd_status) {
-    $('#status-bitrate').text(mpd_status.bitrate);
+    on_state_stop: function() {
+        $('#currentsong-artist').text('');
+        $('#currentsong-title').text('');
+        $('#currentsong-album').text('');
+        $('#currentsong-date').text('');
 
-    var time = mpd_status.time.split(':');
-    $('#time-elapsed').text(seconds_to_str(time[0]));
-    $('#time-total').text(seconds_to_str(time[1]));
+        $('#status-bitrate').text('0');
 
-    var progress = time[0] / time[1] * 100;
-    $('#time-progress').css('width', progress+'%')
-        .attr('aria-valuenow', time[0])
-        .attr('aria-valuemax', time[1]);
+        $('#time-elapsed').text('00:00');
+        $('#time-total').text('00:00');
 
-    $('#playlist tbody tr').removeAttr('style');
-    $('#playlist tbody tr td.pl-pos').filter(function() {
-        return $(this).text() == mpd_status.song;
-    }).closest('tr').css('font-weight', 'bold');
-}
+        $('#time-progress').css('width', 0)
+            .attr('aria-valuenow', 0)
+            .attr('aria-valuemax', 0);
 
-function on_state_stop() {
-    $('#currentsong-artist').text('');
-    $('#currentsong-title').text('');
-    $('#currentsong-album').text('');
-    $('#currentsong-date').text('');
+        $('#playlist tbody tr').removeAttr('style');
+    },
 
-    $('#status-bitrate').text('0');
-
-    $('#time-elapsed').text('00:00');
-    $('#time-total').text('00:00');
-
-    $('#time-progress').css('width', 0)
-        .attr('aria-valuenow', 0)
-        .attr('aria-valuemax', 0);
-
-    $('#playlist tbody tr').removeAttr('style');
-}
-
-
-function on_poll_success(mpd_status) {
-    if (mpd_status.state != 'stop') {
-        update_currentsong();
-        on_state_play(mpd_status);
-    } else {
-        on_state_stop();
-    }
-
-    CONTROLS.update(mpd_status);
-
-    if (page == '/playlist' && mpd_status.playlist != playlist) {
-        update_playlist(mpd_status.playlist);
-    }
-
-    if (mpd_status.updating_db) {
-        alert_db_update_in_progress();
-        updating_db = true;
-    } else {
-        if (updating_db) {
-            alert_db_update_finished();
-            if (page == '/library') update_artists();
-            hide_alert();
-            updating_db = false;
+    on_poll_success: function(mpd_status) {
+        if (mpd_status.state != 'stop') {
+            POLLER.update_currentsong();
+            POLLER.on_state_play(mpd_status);
+        } else {
+            POLLER.on_state_stop();
         }
-    }
-}
 
-function on_poll_error() {
-    on_state_stop();
-}
+        CONTROLS.update(mpd_status);
 
-function poll() {
-    var timeout;
-    $.ajax({
-        url: $SCRIPT_ROOT + '/poller/status',
-        dataType: 'json',
-        success: function(mpd_status) {
-            on_poll_success(mpd_status);
-            timeout = 500;
-        },
-        error: function() {
-            on_poll_error();
-            timeout = 5000;
-        },
-        complete: function() {
-            setTimeout(poll, timeout);
+        if (POLLER.page == '/playlist' && mpd_status.playlist != playlist) {
+            update_playlist(mpd_status.playlist);
         }
-    });
+
+        if (mpd_status.updating_db) {
+            alert_db_update_in_progress();
+            POLLER.updating_db = true;
+        } else {
+            if (POLLER.updating_db) {
+                alert_db_update_finished();
+                if (POLLER.page == '/library') update_artists();
+                hide_alert();
+                POLLER.updating_db = false;
+            }
+        }
+    },
+
+    on_poll_error: function() {
+        POLLER.on_status_stop();
+    },
+
+    poll: function() {
+        var timeout;
+        $.ajax({
+            url: $SCRIPT_ROOT + '/poller/status',
+            dataType: 'json',
+            success: function(mpd_status) {
+                POLLER.on_poll_success(mpd_status);
+                timeout = 500;
+            },
+            error: function() {
+                POLLER.on_poll_error();
+                timeout = 5000;
+            },
+            complete: function() {
+                setTimeout(POLLER.poll, timeout);
+            }
+        });
+    }
 }
 
 

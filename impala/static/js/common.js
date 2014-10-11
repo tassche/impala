@@ -302,8 +302,8 @@ POLLER = {
 
         CONTROLS.update(mpd_status);
 
-        if (POLLER.page == '/playlist' && mpd_status.playlist != PLAYLIST.playlist) {
-            PLAYLIST.update_playlist(mpd_status.playlist);
+        if (POLLER.page == '/playlist' && mpd_status.playlist != PLAYLIST.version) {
+            PLAYLIST.fetch(mpd_status.playlist);
         }
 
         if (mpd_status.updating_db) {
@@ -346,7 +346,7 @@ POLLER = {
 }
 
 PLAYLIST = {
-    playlist: undefined, // playlist version
+    version: undefined,
 
     init: function() {
         PLAYLIST.bind_clear_command();
@@ -359,28 +359,18 @@ PLAYLIST = {
         });
     },
 
-    currentsong: function(pos) {
-        $('#playlist tbody tr').removeAttr('style');
-
-        if (typeof pos !== 'undefined') {
-            $('#playlist tbody tr td.pl-pos').filter(function() {
-                return $(this).text() === pos;
-            }).closest('tr').css('font-weight', 'bold');
-        }
-    },
-
-    update_playlist: function(version) {
+    fetch: function(version) {
         $.ajax({
             url: $SCRIPT_ROOT + '/mpd/playlistinfo',
             dataType: 'json',
             success: function(playlistinfo) {
-                PLAYLIST.populate_playlist(playlistinfo);
-                PLAYLIST.playlist = version;
+                PLAYLIST.populate(playlistinfo);
+                PLAYLIST.version = version;
             }
         });
     },
 
-    populate_playlist: function(playlistinfo) {
+    populate: function(playlistinfo) {
         // clear existing playlist
         $('#playlist tbody tr').remove();
         // populate playlist
@@ -413,6 +403,16 @@ PLAYLIST = {
         // bind handlers
         $('#playlist tbody tr').click(PLAYLIST.on_song_clicked);
         $('#playlist tbody tr td.pl-rm').click(PLAYLIST.on_song_delete_clicked);
+    },
+
+    currentsong: function(pos) {
+        $('#playlist tbody tr').removeAttr('style');
+
+        if (typeof pos !== 'undefined') {
+            $('#playlist tbody tr td.pl-pos').filter(function() {
+                return $(this).text() === pos;
+            }).closest('tr').css('font-weight', 'bold');
+        }
     },
 
     on_song_clicked: function(event) {

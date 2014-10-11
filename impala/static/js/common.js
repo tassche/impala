@@ -289,28 +289,15 @@ POLLER = {
     page: window.location.pathname,
     updating_db: false,
 
-    on_state_play: function(mpd_status) {
-        $('#playlist tbody tr').removeAttr('style');
-        $('#playlist tbody tr td.pl-pos').filter(function() {
-            return $(this).text() == mpd_status.song;
-        }).closest('tr').css('font-weight', 'bold');
-    },
-
-    on_state_stop: function() {
-        $('#playlist tbody tr').removeAttr('style');
-    },
-
     on_poll_success: function(mpd_status) {
         if (mpd_status.state != 'stop') {
             CURRENTSONG.fetch();
             STATUS.update(mpd_status);
-
-            POLLER.on_state_play(mpd_status);
+            PLAYLIST.currentsong(mpd_status.song)
         } else {
             CURRENTSONG.update();
             STATUS.update();
-
-            POLLER.on_state_stop();
+            PLAYLIST.currentsong()
         }
 
         CONTROLS.update(mpd_status);
@@ -335,8 +322,7 @@ POLLER = {
     on_poll_error: function() {
         CURRENTSONG.update();
         STATUS.update();
-
-        POLLER.on_state_stop();
+        PLAYLIST.currentsong()
     },
 
     poll: function() {
@@ -356,6 +342,18 @@ POLLER = {
                 setTimeout(POLLER.poll, timeout);
             }
         });
+    }
+}
+
+PLAYLIST = {
+    currentsong: function(pos) {
+        $('#playlist tbody tr').removeAttr('style');
+
+        if (typeof pos !== 'undefined') {
+            $('#playlist tbody tr td.pl-pos').filter(function() {
+                return $(this).text() === pos;
+            }).closest('tr').css('font-weight', 'bold');
+        }
     }
 }
 

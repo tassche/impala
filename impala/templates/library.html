@@ -67,7 +67,7 @@
 {% block mpd_script %}
     {{ super() }}
     <script>
-        var artist_tag = "{{ config['ARTIST_TAG'] }}";
+        LIBRARY.artist_tag = "{{ config['ARTIST_TAG'] }}";
         $(document).ready(LIBRARY.init);
     </script>
 {% endblock %}

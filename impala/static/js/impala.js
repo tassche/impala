@@ -441,6 +441,8 @@ PLAYLIST = {
 }
 
 LIBRARY = {
+    artist_tag: 'albumartist',
+
     breadcrumbs: {
         elements: {
             home    : $('<a id="lib-breadcrumb-home" href="#">'),
@@ -536,7 +538,7 @@ LIBRARY = {
         fetch: function() {
             if (! $('#lib-artists').length) return;
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/list?' + artist_tag,
+                url: $SCRIPT_ROOT + '/mpd/list?' + LIBRARY.artist_tag,
                 dataType: 'json',
                 success: LIBRARY.artists.populate
             });
@@ -580,7 +582,7 @@ LIBRARY = {
                 .find('td.lib-artist-name').text();
             $.ajax({
                 url: $SCRIPT_ROOT + '/mpd/findadd?'
-                    + artist_tag + '=' + encodeURIComponent(artist),
+                    + LIBRARY.artist_tag + '=' + encodeURIComponent(artist),
                 dataType: 'text',
                 success: function() {
                     ALERTS.alert_added_to_playlist(artist);
@@ -592,7 +594,7 @@ LIBRARY = {
             var artist = $(this).closest('tr')
                 .find('td.lib-artist-name').text();
             LIBRARY.find_add_and_play(
-                artist_tag + '=' + encodeURIComponent(artist), artist);
+                LIBRARY.artist_tag + '=' + encodeURIComponent(artist), artist);
         }
     },
 
@@ -600,12 +602,12 @@ LIBRARY = {
         fetch: function(artist) {
             $.ajax({
                 url: $SCRIPT_ROOT + '/mpd/find?'
-                    + artist_tag + '=' + encodeURIComponent(artist),
+                    + LIBRARY.artist_tag + '=' + encodeURIComponent(artist),
                 dataType: 'json',
                 success: function(songs) {
                     var albums = [], last_album; // js has no set object
                     for (var i = 0; i < songs.length; i++) {
-                        var album = new Album(songs[i][artist_tag],
+                        var album = new Album(songs[i][LIBRARY.artist_tag],
                             songs[i].date, songs[i].album);
                         if (!album.equals(last_album)) {
                             albums.push(album);
@@ -666,8 +668,8 @@ LIBRARY = {
                 $(this).closest('tr').find('td.lib-album-title').text()
             );
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/findadd?'
-                    + artist_tag + '=' + encodeURIComponent(album.artist)
+                url: $SCRIPT_ROOT + '/mpd/findadd?' + LIBRARY.artist_tag
+                    + '=' + encodeURIComponent(album.artist)
                     + '&album=' + encodeURIComponent(album.title)
                     + '&date=' + encodeURIComponent(album.date),
                 dataType: 'text',
@@ -685,7 +687,7 @@ LIBRARY = {
                 $(this).closest('tr').find('td.lib-album-title').text()
             );
             LIBRARY.find_add_and_play(
-                artist_tag + '=' + encodeURIComponent(album.artist) +
+                LIBRARY.artist_tag + '=' + encodeURIComponent(album.artist) +
                 '&album=' + encodeURIComponent(album.title) +
                 '&date=' + encodeURIComponent(album.date),
                 album.title + ' by ' + album.artist
@@ -696,8 +698,8 @@ LIBRARY = {
     songs: {
         fetch: function(album) {
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/find?'
-                    + artist_tag + '=' + encodeURIComponent(album.artist)
+                url: $SCRIPT_ROOT + '/mpd/find?' + LIBRARY.artist_tag
+                    + '=' + encodeURIComponent(album.artist)
                     + '&album=' + encodeURIComponent(album.title)
                     + '&date=' + encodeURIComponent(album.date),
                 dataType: 'json',

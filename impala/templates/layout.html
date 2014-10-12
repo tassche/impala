@@ -51,7 +51,7 @@
 
 {% block script %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/impala.js') }}"></script>
     <script>
     {% if active_navbar_element is defined %}
         NAVBAR.active_element = $('{{ active_navbar_element|safe }}');

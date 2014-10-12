@@ -18,62 +18,58 @@
  * along with Impala.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// common.js //
-
-
 ICONS = {
     add: '<span class="glyphicon glyphicon-plus"></span>',
     play: '<span class="glyphicon glyphicon-play"></span>'
 }
 
-/// ALERTS ///
+ALERTS = {
+    element: $('#alert'),
+    classes: {
+        info    : 'alert alert-info',
+        success : 'alert alert-success'
+    },
+    messages: {
+        db_updating : 'Database update in progress...',
+        db_updated  : 'Database update finished.',
+        pl_added_x  : '{x} added to playlist.',
+        pl_cleared  : 'Playlist cleared.'
+    },
 
-var alert_div = $('#alert');
-var alert_class = {
-    info:    'alert alert-info',
-    success: 'alert alert-success'
-};
-var alert_text = {
-    db_update_in_progress: 'Database update in progress...',
-    db_update_finished:    'Database update finished.',
-    added_to_playlist:     ' added to playlist.',
-    playlist_cleared:      'Playlist cleared.'
-};
-
-
-function alert_db_update_in_progress() {
-    alert_alert(alert_class.info, alert_text.db_update_in_progress);
-}
-
-function alert_db_update_finished() {
-    alert_alert(alert_class.success, alert_text.db_update_finished);
-}
-
-function alert_added_to_playlist(what) {
-    alert_alert(alert_class.success, what + alert_text.added_to_playlist);
-    hide_alert();
-}
-
-function alert_playlist_cleared() {
-    alert_alert(alert_class.success, alert_text.playlist_cleared);
-    hide_alert();
-}
-
-
-function alert_alert(css_class, text) {
-    alert_div.attr('class', css_class);
-    alert_div.text(text);
-    alert_div.show();
-    LAYOUT.resize_components();
-}
-
-function hide_alert() {
-    setTimeout(function() {
-        alert_div.hide();
+    show: function(css_class, message) {
+        ALERTS.element.attr('class', css_class);
+        ALERTS.element.text(message);
+        ALERTS.element.show();
         LAYOUT.resize_components();
-    }, 3000);
-}
+    },
 
+    hide: function() {
+        setTimeout(function() {
+            ALERTS.element.hide();
+            LAYOUT.resize_components();
+        }, 3000);
+    },
+
+    alert_db_update_in_progress: function() {
+        ALERTS.show(ALERTS.classes.info, ALERTS.messages.db_updating);
+    },
+
+    alert_db_update_finished: function() {
+        ALERTS.show(ALERTS.classes.success, ALERTS.messages.db_updated);
+        ALERTS.hide();
+    },
+
+    alert_added_to_playlist: function(description) {
+        ALERTS.show(ALERTS.classes.success,
+            ALERTS.messages.pl_added_x.replace('{x}', description));
+        ALERTS.hide();
+    },
+
+    alert_playlist_cleared: function() {
+        ALERTS.show(ALERTS.classes.success, ALERTS.messages.pl_cleared);
+        ALERTS.hide();
+    }
+}
 
 LAYOUT = {
     viewport: undefined, // viewport class (xs, sm, md or lg)
@@ -123,7 +119,7 @@ NAVBAR = {
             $.ajax({
                 url: $SCRIPT_ROOT + '/mpd/clear',
                 dataType: 'text',
-                success: alert_playlist_cleared
+                success: ALERTS.alert_playlist_cleared
             });
         });
     },
@@ -312,14 +308,13 @@ POLLER = {
         }
 
         if (mpd_status.updating_db) {
-            alert_db_update_in_progress();
             POLLER.updating_db = true;
+            ALERTS.alert_db_update_in_progress();
         } else {
             if (POLLER.updating_db) {
-                alert_db_update_finished();
                 if (POLLER.page == '/library') LIBRARY.artists.fetch();
-                hide_alert();
                 POLLER.updating_db = false;
+                ALERTS.alert_db_update_finished();
             }
         }
     },
@@ -574,7 +569,7 @@ LIBRARY = {
                     + artist_tag + '=' + encodeURIComponent(artist),
                 dataType: 'text',
                 success: function() {
-                    alert_added_to_playlist(artist);
+                    ALERTS.alert_added_to_playlist(artist);
                 }
             });
         },
@@ -664,7 +659,7 @@ LIBRARY = {
                     + '&date=' + encodeURIComponent(album.date),
                 dataType: 'text',
                 success: function() {
-                    alert_added_to_playlist(
+                    ALERTS.alert_added_to_playlist(
                         album.title + ' by ' + album.artist);
                 }
             });
@@ -743,27 +738,27 @@ LIBRARY = {
                 url: $SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file),
                 dataType: 'text',
                 success: function() {
-                    alert_added_to_playlist(title + ' by ' + artist);
+                    ALERTS.alert_added_to_playlist(title + ' by ' + artist);
                 }
             });
         }
     },
 
-    add_and_play: function(file, alert_what) {
+    add_and_play: function(file, description) {
         $.ajax({
             url: $SCRIPT_ROOT + '/mpd/addid?' + encodeURIComponent(file),
             dataType: 'text',
             success: function(songid) {
                 var songid = encodeURIComponent(songid);
                 $.get($SCRIPT_ROOT + '/mpd/playid?' + songid);
-                if (alert_what) {
-                    alert_added_to_playlist(alert_what);
+                if (typeof description !== 'undefined') {
+                    ALERTS.alert_added_to_playlist(description);
                 }
             }
         });
     },
 
-    find_add_and_play: function(query, alert_what) {
+    find_add_and_play: function(query, description) {
         $.ajax({
             url: $SCRIPT_ROOT + '/mpd/find?' + query,
             dataType: 'json',
@@ -776,8 +771,8 @@ LIBRARY = {
                         $.get($SCRIPT_ROOT + '/mpd/add?'+ file);
                     }
                 }
-                if (alert_what) {
-                    alert_added_to_playlist(alert_what);
+                if (typeof description !== 'undefined') {
+                    ALERTS.alert_added_to_playlist(description);
                 }
             }
         });

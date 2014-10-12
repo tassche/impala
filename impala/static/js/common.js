@@ -21,6 +21,11 @@
 // common.js //
 
 
+ICONS = {
+    add: '<span class="glyphicon glyphicon-plus"></span>',
+    play: '<span class="glyphicon glyphicon-play"></span>'
+}
+
 /// ALERTS ///
 
 var alert_div = $('#alert');
@@ -312,7 +317,7 @@ POLLER = {
         } else {
             if (POLLER.updating_db) {
                 alert_db_update_finished();
-                if (POLLER.page == '/library') update_artists();
+                if (POLLER.page == '/library') LIBRARY.artists.fetch();
                 hide_alert();
                 POLLER.updating_db = false;
             }
@@ -513,232 +518,235 @@ LIBRARY = {
     },
 
     init: function() {
-        LIBRARY.update_artists();
+        LIBRARY.artists.fetch();
         LIBRARY.breadcrumbs.init();
         LIBRARY.viewport.show_artists();
         $(window).resize(LIBRARY.viewport.show_artists);
     },
 
-    update_artists: function() {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/list?' + artist_tag,
-            dataType: 'json',
-            success: LIBRARY.populate_artists
-        });
-    },
+    artists: {
+        fetch: function() {
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/list?' + artist_tag,
+                dataType: 'json',
+                success: LIBRARY.artists.populate
+            });
+        },
 
-    update_albums: function(artist) {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/find?'
-                + artist_tag + '=' + encodeURIComponent(artist),
-            dataType: 'json',
-            success: function(songs) {
-                var albums = [], last_album; // js has no set object
-                for (var i = 0; i < songs.length; i++) {
-                    var album = new Album(
-                        songs[i][artist_tag], songs[i].date, songs[i].album
-                    );
-                    if (!album.equals(last_album)) {
-                        albums.push(album);
-                        last_album = album;
-                    }
+        populate: function(artists) {
+            var td_artist = '<td class="lib-artist-name">',
+                td_add = '<td class="lib-artist-add no-stretch">',
+                td_play = '<td class="lib-artist-play no-stretch">';
+
+            $('#artists tbody tr').remove();
+            $.each(artists, function(i, artist) {
+                if (artist != '') {
+                    $('<tr>').append(
+                        $(td_artist).text(artist),
+                        $(td_add).html(ICONS.add),
+                        $(td_play).html(ICONS.play)
+                    ).appendTo('#artists');
                 }
-                LIBRARY.populate_albums(albums);
-            }
-        });
-    },
+            });
 
-    update_songs: function(album) {
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/find?'
-                + artist_tag + '=' + encodeURIComponent(album.artist)
-                + '&album=' + encodeURIComponent(album.title)
-                + '&date=' + encodeURIComponent(album.date),
-            dataType: 'json',
-            success: LIBRARY.populate_songs
-        });
-    },
+            LIBRARY.albums.fetch(first_not_empty_string(artists));
 
-    populate_artists: function(artists) {
-        // clear existing artists
-        $('#artists tbody tr').remove();
-        // populate artist table
-        $.each(artists, function(i, artist) {
-            if (artist != '') {
-                $('<tr>').append(
-                    $('<td class="lib-artist-name">').text(artist),
-                    $('<td class="lib-artist-add no-stretch">')
-                        .html('<span class="glyphicon glyphicon-plus"></span>'),
-                    $('<td class="lib-artist-play no-stretch">')
-                        .html('<span class="glyphicon glyphicon-play"></span>')
-                ).appendTo('#artists');
-            }
-        });
-        // find the first artist with a non empty name and update the albums
-        var i = 0, artist = '';
-        while(artist == '' && i < artists.length) {
-            artist = artists[i]; i++;
+            // bind handlers
+            $('#artists tbody tr').click(LIBRARY.artists.on_row_clicked);
+            $('#artists tbody tr td.lib-artist-add')
+                .click(LIBRARY.artists.on_add_clicked);
+            $('#artists tbody tr td.lib-artist-play')
+                .click(LIBRARY.artists.on_play_clicked);
+        },
+
+        on_row_clicked: function(event) {
+            var artist = $(this).find('td.lib-artist-name').text();
+            LIBRARY.albums.fetch(artist);
+            LIBRARY.breadcrumbs.set_artist(artist);
+            LIBRARY.viewport.show_albums();
+        },
+
+        on_add_clicked: function(event) {
+            var artist = $(this).closest('tr')
+                .find('td.lib-artist-name').text();
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/findadd?'
+                    + artist_tag + '=' + encodeURIComponent(artist),
+                dataType: 'text',
+                success: function() {
+                    alert_added_to_playlist(artist);
+                }
+            });
+        },
+
+        on_play_clicked: function(event) {
+            var artist = $(this).closest('tr')
+                .find('td.lib-artist-name').text();
+            LIBRARY.find_add_and_play(
+                artist_tag + '=' + encodeURIComponent(artist), artist);
         }
-        LIBRARY.update_albums(artist);
-        // bind handlers
-        $('#artists tbody tr').click(LIBRARY.on_artist_clicked);
-        $('#artists tbody tr td.lib-artist-add').click(
-            LIBRARY.on_artist_add_clicked
-        );
-        $('#artists tbody tr td.lib-artist-play').click(
-            LIBRARY.on_artist_play_clicked
-        );
     },
 
-    populate_albums: function(albums) {
-        // clear existing albums
-        $('#albums tbody tr').remove();
-        // populate album table
-        $.each(albums, function(i, album) {
-            if (album.title != '') {
-                $('<tr>').append(
-                    $('<td class="lib-album-artist">').text(album.artist),
-                    $('<td class="lib-album-date no-stretch">').text(album.date),
-                    $('<td class="lib-album-title">').text(album.title),
-                    $('<td class="lib-album-add no-stretch">')
-                        .html('<span class="glyphicon glyphicon-plus"></span>'),
-                    $('<td class="lib-album-play no-stretch">')
-                        .html('<span class="glyphicon glyphicon-play"></span>')
-                ).appendTo('#albums');
-            }
-        });
-        // hide the artist column
-        $('#albums tbody tr td.lib-album-artist').hide();
-        // find the first album with a non empty title and update the songs
-        var i = 0, album = null;
-        while(album === null && i < albums.length) {
-            if (albums[i].title != '') album = albums[i]; i++;
+    albums: {
+        fetch: function(artist) {
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/find?'
+                    + artist_tag + '=' + encodeURIComponent(artist),
+                dataType: 'json',
+                success: function(songs) {
+                    var albums = [], last_album; // js has no set object
+                    for (var i = 0; i < songs.length; i++) {
+                        var album = new Album(
+                            songs[i][artist_tag], songs[i].date, songs[i].album
+                        );
+                        if (!album.equals(last_album)) {
+                            albums.push(album);
+                            last_album = album;
+                        }
+                    }
+                    LIBRARY.albums.populate(albums);
+                }
+            });
+        },
+
+        populate: function(albums) {
+            var td_artist = '<td class="lib-album-artist">',
+                td_date = '<td class="lib-album-date no-stretch">',
+                td_title = '<td class="lib-album-title">',
+                td_add = '<td class="lib-album-add no-stretch">',
+                td_play = '<td class="lib-album-play no-stretch">';
+
+            $('#albums tbody tr').remove();
+            $.each(albums, function(i, album) {
+                if (album.title != '') {
+                    $('<tr>').append(
+                        $(td_artist).text(album.artist),
+                        $(td_date).text(album.date),
+                        $(td_title).text(album.title),
+                        $(td_add).html(ICONS.add),
+                        $(td_play).html(ICONS.play)
+                    ).appendTo('#albums');
+                }
+            });
+            $('#albums tbody tr td.lib-album-artist').hide();
+
+            LIBRARY.songs.fetch(first_not_empty_album(albums));
+
+            // bind handlers
+            $('#albums tbody tr').click(LIBRARY.albums.on_row_clicked);
+            $('#albums tbody tr td.lib-album-add')
+                .click(LIBRARY.albums.on_add_clicked);
+            $('#albums tbody tr td.lib-album-play')
+                .click(LIBRARY.albums.on_play_clicked);
+        },
+
+        on_row_clicked: function(event) {
+            var album = new Album(
+                $(this).closest('tr').find('td.lib-album-artist').text(),
+                $(this).closest('tr').find('td.lib-album-date').text(),
+                $(this).closest('tr').find('td.lib-album-title').text()
+            );
+            LIBRARY.songs.fetch(album);
+            LIBRARY.breadcrumbs.set_album(album.title);
+            LIBRARY.viewport.show_songs();
+        },
+
+        on_add_clicked: function(event) {
+            var album = new Album(
+                $(this).closest('tr').find('td.lib-album-artist').text(),
+                $(this).closest('tr').find('td.lib-album-date').text(),
+                $(this).closest('tr').find('td.lib-album-title').text()
+            );
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/findadd?'
+                    + artist_tag + '=' + encodeURIComponent(album.artist)
+                    + '&album=' + encodeURIComponent(album.title)
+                    + '&date=' + encodeURIComponent(album.date),
+                dataType: 'text',
+                success: function() {
+                    alert_added_to_playlist(
+                        album.title + ' by ' + album.artist);
+                }
+            });
+        },
+
+        on_play_clicked: function(event) {
+            var album = new Album(
+                $(this).closest('tr').find('td.lib-album-artist').text(),
+                $(this).closest('tr').find('td.lib-album-date').text(),
+                $(this).closest('tr').find('td.lib-album-title').text()
+            );
+            LIBRARY.find_add_and_play(
+                artist_tag + '=' + encodeURIComponent(album.artist) +
+                '&album=' + encodeURIComponent(album.title) +
+                '&date=' + encodeURIComponent(album.date),
+                album.title + ' by ' + album.artist
+            );
         }
-        LIBRARY.update_songs(album);
-        // bind handlers
-        $('#albums tbody tr').click(LIBRARY.on_album_clicked);
-        $('#albums tbody tr td.lib-album-add').click(
-            LIBRARY.on_album_add_clicked
-        );
-        $('#albums tbody tr td.lib-album-play').click(
-            LIBRARY.on_album_play_clicked
-        );
     },
 
-    populate_songs: function(songs) {
-        // clear existing songs
-        $('#songs tbody tr').remove();
-        // populate song table
-        $.each(songs, function(i, song) {
-            $('<tr>').append(
-                $('<td class="lib-song-track no-stretch">').text(song.track),
-                $('<td class="lib-song-title">').text(song.title),
-                $('<td class="lib-song-add no-stretch">')
-                    .html('<span class="glyphicon glyphicon-plus"></span>'),
-                $('<td class="lib-song-play no-stretch">')
-                    .html('<span class="glyphicon glyphicon-play"></span>'),
-                $('<td class="lib-song-artist">').text(song.artist),
-                $('<td class="lib-song-file">').text(song.file)
-            ).appendTo('#songs');
-        });
-        // hide the artist and file columns
-        $('#songs tbody tr td.lib-song-artist').hide();
-        $('#songs tbody tr td.lib-song-file').hide();
-        // bind handlers
-        $('#songs tbody tr').click(LIBRARY.on_song_clicked);
-        $('#songs tbody tr td.lib-song-add').click(
-            LIBRARY.on_song_add_clicked
-        );
-    },
+    songs: {
+        fetch: function(album) {
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/find?'
+                    + artist_tag + '=' + encodeURIComponent(album.artist)
+                    + '&album=' + encodeURIComponent(album.title)
+                    + '&date=' + encodeURIComponent(album.date),
+                dataType: 'json',
+                success: LIBRARY.songs.populate
+            });
+        },
 
-    on_artist_clicked: function(event) {
-        var artist = $(this).find('td.lib-artist-name').text();
-        LIBRARY.update_albums(artist);
-        LIBRARY.breadcrumbs.set_artist(artist);
-        LIBRARY.viewport.show_albums();
-    },
+        populate: function(songs) {
+            var td_track = '<td class="lib-song-track no-stretch">',
+                td_title = '<td class="lib-song-title">',
+                td_add = '<td class="lib-song-add no-stretch">',
+                td_play = '<td class="lib-song-play no-stretch">',
+                td_artist = '<td class="lib-song-artist">',
+                td_file = '<td class="lib-song-file">';
 
-    on_artist_add_clicked: function(event) {
-        var artist = $(this).closest('tr').find('td.lib-artist-name').text();
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/findadd?'
-                + artist_tag + '=' + encodeURIComponent(artist),
-            dataType: 'text',
-            success: function() {
-                alert_added_to_playlist(artist);
-            }
-        });
-    },
+            $('#songs tbody tr').remove();
+            $.each(songs, function(i, song) {
+                $('<tr>').append(
+                    $(td_track).text(song.track),
+                    $(td_title).text(song.title),
+                    $(td_add).html(ICONS.add),
+                    $(td_play).html(ICONS.play),
+                    $(td_artist).text(song.artist),
+                    $(td_file).text(song.file)
+                ).appendTo('#songs');
+            });
+            $('#songs tbody tr td.lib-song-artist').hide();
+            $('#songs tbody tr td.lib-song-file').hide();
+ 
+            // bind handlers
+            $('#songs tbody tr').click(LIBRARY.songs.on_row_clicked);
+            $('#songs tbody tr td.lib-song-add')
+                .click(LIBRARY.songs.on_add_clicked);
+        },
 
-    on_artist_play_clicked: function(event) {
-        var artist = $(this).closest('tr').find('td.lib-artist-name').text();
-        LIBRARY.find_add_and_play(
-            artist_tag + '=' + encodeURIComponent(artist), artist
-        );
-    },
+        on_row_clicked: function(event) {
+            var tr = $(this).closest('tr');
+            var file = tr.find('td.lib-song-file').text(),
+                artist = tr.find('td.lib-song-artist').text(),
+                title = tr.find('td.lib-song-title').text();
+            LIBRARY.add_and_play(file, title + ' by ' + artist);
+        },
 
-    on_album_clicked: function(event) {
-        var album = new Album(
-            $(this).closest('tr').find('td.lib-album-artist').text(),
-            $(this).closest('tr').find('td.lib-album-date').text(),
-            $(this).closest('tr').find('td.lib-album-title').text()
-        );
-        LIBRARY.update_songs(album);
-        LIBRARY.breadcrumbs.set_album(album.title);
-        LIBRARY.viewport.show_songs();
-    },
-
-    on_album_add_clicked: function(event) {
-        var album = new Album(
-            $(this).closest('tr').find('td.lib-album-artist').text(),
-            $(this).closest('tr').find('td.lib-album-date').text(),
-            $(this).closest('tr').find('td.lib-album-title').text()
-        );
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/findadd?'
-                + artist_tag + '=' + encodeURIComponent(album.artist)
-                + '&album=' + encodeURIComponent(album.title)
-                + '&date=' + encodeURIComponent(album.date),
-            dataType: 'text',
-            success: function() {
-                alert_added_to_playlist(album.title + ' by ' + album.artist);
-            }
-        });
-    },
-
-    on_album_play_clicked: function(event) {
-        var album = new Album(
-            $(this).closest('tr').find('td.lib-album-artist').text(),
-            $(this).closest('tr').find('td.lib-album-date').text(),
-            $(this).closest('tr').find('td.lib-album-title').text()
-        );
-        LIBRARY.find_add_and_play(
-            artist_tag + '=' + encodeURIComponent(album.artist) +
-            '&album=' + encodeURIComponent(album.title) +
-            '&date=' + encodeURIComponent(album.date),
-            album.title + ' by ' + album.artist
-        );
-    },
-
-    on_song_clicked: function(event) {
-        var artist = $(this).closest('tr').find('td.lib-song-artist').text();
-        var title = $(this).closest('tr').find('td.lib-song-title').text();
-        var file = $(this).closest('tr').find('td.lib-song-file').text();
-        LIBRARY.add_and_play(file, title + ' by ' + artist);
-    },
-
-    on_song_add_clicked: function(event) {
-        event.stopPropagation();
-        var artist = $(this).closest('tr').find('td.lib-song-artist').text();
-        var title = $(this).closest('tr').find('td.lib-song-title').text();
-        var file = $(this).closest('tr').find('td.lib-song-file').text();
-        $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file),
-            dataType: 'text',
-            success: function() {
-                alert_added_to_playlist(title + ' by ' + artist);
-            }
-        });
+        on_add_clicked: function(event) {
+            event.stopPropagation();
+            var tr = $(this).closest('tr');
+            var file = tr.find('td.lib-song-file').text(),
+                artist = tr.find('td.lib-song-artist').text(),
+                title = tr.find('td.lib-song-title').text();
+            $.ajax({
+                url: $SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file),
+                dataType: 'text',
+                success: function() {
+                    alert_added_to_playlist(title + ' by ' + artist);
+                }
+            });
+        }
     },
 
     add_and_play: function(file, alert_what) {
@@ -830,6 +838,21 @@ function append_css_class(element, css_class) {
     element.attr('class', element.attr('class') + ' ' + css_class);
 }
 
+function first_not_empty_string(array) {
+    var i = 0, result = '';
+    while(result == '' && i < array.length) {
+        result = array[i]; i++;
+    }
+    return result;
+}
+
+function first_not_empty_album(albums) {
+    var i = 0, album = null;
+    while(album === null && i < albums.length) {
+        if (albums[i].title != '') album = albums[i]; i++;
+    }
+    return album;
+}
 
 function Album(artist, date, title) {
     this.artist = (artist instanceof Array) ? artist[0] : artist;

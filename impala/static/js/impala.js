@@ -117,7 +117,7 @@ NAVBAR = {
     bind_playlist_commands: function() {
         $('#nav-pl-clear').click(function(event) {
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/clear',
+                url: SCRIPT_ROOT + '/mpd/clear',
                 dataType: 'text',
                 success: ALERTS.alert_playlist_cleared
             });
@@ -126,10 +126,10 @@ NAVBAR = {
 
     bind_database_commands: function() {
         $('#nav-lib-update').click(function(event) {
-            $.get($SCRIPT_ROOT + '/mpd/update');
+            $.get(SCRIPT_ROOT + '/mpd/update');
         });
         $('#nav-lib-rescan').click(function(event) {
-            $.get($SCRIPT_ROOT + '/mpd/rescan');
+            $.get(SCRIPT_ROOT + '/mpd/rescan');
         });
     },
 
@@ -154,7 +154,7 @@ CURRENTSONG = {
     fetch: function() {
         if (! $('#currentsong, #currentsong-mini').length) return;
         $.ajax({
-            url: $SCRIPT_ROOT + '/poller/currentsong',
+            url: SCRIPT_ROOT + '/poller/currentsong',
             dataType: 'json',
             success: CURRENTSONG.update,
             error: function() {
@@ -232,7 +232,7 @@ CONTROLS = {
         ];
         $.each(elements, function(i, element) {
             $(element[0]).click(function(event) {
-                $.get($SCRIPT_ROOT + '/mpd/' + element[1]);
+                $.get(SCRIPT_ROOT + '/mpd/' + element[1]);
             });
         });
     },
@@ -242,7 +242,7 @@ CONTROLS = {
         $.each(options, function(i, option) {
             $('#' + option).click(function(event) {
                 var state = (CONTROLS.playback_options[option] > 0) ? 0 : 1;
-                $.get($SCRIPT_ROOT + '/mpd/' + option + '?' + state);
+                $.get(SCRIPT_ROOT + '/mpd/' + option + '?' + state);
             });
         });
     },
@@ -250,11 +250,11 @@ CONTROLS = {
     bind_volume_controls: function() {
         $('#volume-down').click(function(event) {
             var volume = (CONTROLS.volume < 5) ? 0 : CONTROLS.volume - 5;
-            $.get($SCRIPT_ROOT + '/mpd/setvol?' + volume);
+            $.get(SCRIPT_ROOT + '/mpd/setvol?' + volume);
         });
         $('#volume-up').click(function(event) {
             var volume = (CONTROLS.volume > 95) ? 100 : CONTROLS.volume + 5;
-            $.get($SCRIPT_ROOT + '/mpd/setvol?' + volume);
+            $.get(SCRIPT_ROOT + '/mpd/setvol?' + volume);
         });
         $('#volume-off').click(function(event) {
             var volume;
@@ -265,7 +265,7 @@ CONTROLS = {
                 volume = 0;
                 CONTROLS.volume_off = CONTROLS.volume;
             }
-            $.get($SCRIPT_ROOT + '/mpd/setvol?' + volume);
+            $.get(SCRIPT_ROOT + '/mpd/setvol?' + volume);
         });
     },
 
@@ -304,7 +304,7 @@ POLLER = {
     start: function() {
         var timeout;
         $.ajax({
-            url: $SCRIPT_ROOT + '/poller/status',
+            url: SCRIPT_ROOT + '/poller/status',
             dataType: 'json',
             success: function(mpd_status) {
                 POLLER.on_poll_success(mpd_status);
@@ -365,14 +365,14 @@ PLAYLIST = {
     bind_clear_command: function() {
         $('#playlist thead tr th.pl-rm').click(function(event) {
             event.stopPropagation();
-            $.get($SCRIPT_ROOT + '/mpd/clear');
+            $.get(SCRIPT_ROOT + '/mpd/clear');
         });
     },
 
     fetch: function(version) {
         if (! $('#playlist').length) return;
         $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/playlistinfo',
+            url: SCRIPT_ROOT + '/mpd/playlistinfo',
             dataType: 'json',
             success: function(playlistinfo) {
                 PLAYLIST.populate(playlistinfo);
@@ -430,13 +430,13 @@ PLAYLIST = {
     },
 
     on_song_clicked: function(event) {
-        $.get($SCRIPT_ROOT + '/mpd/play?' + $(this).find('td.pl-pos').text());
+        $.get(SCRIPT_ROOT + '/mpd/play?' + $(this).find('td.pl-pos').text());
     },
 
     on_song_delete_clicked: function(event) {
         event.stopPropagation();
         var pos = $(this).closest('tr').find('td.pl-pos').text();
-        $.get($SCRIPT_ROOT + '/mpd/delete?' + pos);
+        $.get(SCRIPT_ROOT + '/mpd/delete?' + pos);
     }
 }
 
@@ -538,7 +538,7 @@ LIBRARY = {
         fetch: function() {
             if (! $('#lib-artists').length) return;
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/list?' + LIBRARY.artist_tag,
+                url: SCRIPT_ROOT + '/mpd/list?' + LIBRARY.artist_tag,
                 dataType: 'json',
                 success: LIBRARY.artists.populate
             });
@@ -581,7 +581,7 @@ LIBRARY = {
             var artist = $(this).closest('tr')
                 .find('td.lib-artist-name').text();
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/findadd?'
+                url: SCRIPT_ROOT + '/mpd/findadd?'
                     + LIBRARY.artist_tag + '=' + encodeURIComponent(artist),
                 dataType: 'text',
                 success: function() {
@@ -601,7 +601,7 @@ LIBRARY = {
     albums: {
         fetch: function(artist) {
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/find?'
+                url: SCRIPT_ROOT + '/mpd/find?'
                     + LIBRARY.artist_tag + '=' + encodeURIComponent(artist),
                 dataType: 'json',
                 success: function(songs) {
@@ -668,7 +668,7 @@ LIBRARY = {
                 $(this).closest('tr').find('td.lib-album-title').text()
             );
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/findadd?' + LIBRARY.artist_tag
+                url: SCRIPT_ROOT + '/mpd/findadd?' + LIBRARY.artist_tag
                     + '=' + encodeURIComponent(album.artist)
                     + '&album=' + encodeURIComponent(album.title)
                     + '&date=' + encodeURIComponent(album.date),
@@ -698,7 +698,7 @@ LIBRARY = {
     songs: {
         fetch: function(album) {
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/find?' + LIBRARY.artist_tag
+                url: SCRIPT_ROOT + '/mpd/find?' + LIBRARY.artist_tag
                     + '=' + encodeURIComponent(album.artist)
                     + '&album=' + encodeURIComponent(album.title)
                     + '&date=' + encodeURIComponent(album.date),
@@ -750,7 +750,7 @@ LIBRARY = {
                 artist = tr.find('td.lib-song-artist').text(),
                 title = tr.find('td.lib-song-title').text();
             $.ajax({
-                url: $SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file),
+                url: SCRIPT_ROOT + '/mpd/add?' + encodeURIComponent(file),
                 dataType: 'text',
                 success: function() {
                     ALERTS.alert_added_to_playlist(title + ' by ' + artist);
@@ -761,11 +761,11 @@ LIBRARY = {
 
     add_and_play: function(file, description) {
         $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/addid?' + encodeURIComponent(file),
+            url: SCRIPT_ROOT + '/mpd/addid?' + encodeURIComponent(file),
             dataType: 'text',
             success: function(songid) {
                 var songid = encodeURIComponent(songid);
-                $.get($SCRIPT_ROOT + '/mpd/playid?' + songid);
+                $.get(SCRIPT_ROOT + '/mpd/playid?' + songid);
                 if (typeof description !== 'undefined') {
                     ALERTS.alert_added_to_playlist(description);
                 }
@@ -775,7 +775,7 @@ LIBRARY = {
 
     find_add_and_play: function(query, description) {
         $.ajax({
-            url: $SCRIPT_ROOT + '/mpd/find?' + query,
+            url: SCRIPT_ROOT + '/mpd/find?' + query,
             dataType: 'json',
             success: function(songs) {
                 for (var i = 0; i < songs.length; i++) {
@@ -783,7 +783,7 @@ LIBRARY = {
                         LIBRARY.add_and_play(songs[i].file);
                     } else {
                         var file = encodeURIComponent(songs[i].file);
-                        $.get($SCRIPT_ROOT + '/mpd/add?'+ file);
+                        $.get(SCRIPT_ROOT + '/mpd/add?'+ file);
                     }
                 }
                 if (typeof description !== 'undefined') {

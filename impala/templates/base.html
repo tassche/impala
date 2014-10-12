@@ -35,7 +35,7 @@
 {% block script %}
     <script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
+    <script>SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
 {% endblock %}
 </body>
 </html>

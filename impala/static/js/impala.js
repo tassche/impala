@@ -298,7 +298,27 @@ CONTROLS = {
 }
 
 POLLER = {
+    timeout: {success: 500, error: 5000},
     updating_db: false,
+
+    start: function() {
+        var timeout;
+        $.ajax({
+            url: $SCRIPT_ROOT + '/poller/status',
+            dataType: 'json',
+            success: function(mpd_status) {
+                POLLER.on_poll_success(mpd_status);
+                timeout = POLLER.timeout.success;
+            },
+            error: function() {
+                POLLER.on_poll_error();
+                timeout = POLLER.timeout.error;
+            },
+            complete: function() {
+                setTimeout(POLLER.start, timeout);
+            }
+        });
+    },
 
     on_poll_success: function(mpd_status) {
         if (mpd_status.state != 'stop') {
@@ -310,7 +330,6 @@ POLLER = {
             STATUS.update();
             PLAYLIST.currentsong()
         }
-
         CONTROLS.update(mpd_status);
 
         if (mpd_status.playlist != PLAYLIST.version) {
@@ -333,25 +352,6 @@ POLLER = {
         CURRENTSONG.update();
         STATUS.update();
         PLAYLIST.currentsong()
-    },
-
-    poll: function() {
-        var timeout;
-        $.ajax({
-            url: $SCRIPT_ROOT + '/poller/status',
-            dataType: 'json',
-            success: function(mpd_status) {
-                POLLER.on_poll_success(mpd_status);
-                timeout = 500;
-            },
-            error: function() {
-                POLLER.on_poll_error();
-                timeout = 5000;
-            },
-            complete: function() {
-                setTimeout(POLLER.poll, timeout);
-            }
-        });
     }
 }
 

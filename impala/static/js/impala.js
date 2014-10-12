@@ -152,6 +152,7 @@ QUICKNAV = {
 
 CURRENTSONG = {
     fetch: function() {
+        if (! $('#currentsong, #currentsong-mini').length) return;
         $.ajax({
             url: $SCRIPT_ROOT + '/poller/currentsong',
             dataType: 'json',
@@ -164,6 +165,7 @@ CURRENTSONG = {
     },
 
     update: function(currentsong) {
+        if (! $('#currentsong, #currentsong-mini').length) return;
         if (typeof currentsong !== 'undefined') {
             $('#currentsong-artist').text(currentsong.artist);
             $('#currentsong-title').text(currentsong.title);
@@ -180,6 +182,7 @@ CURRENTSONG = {
 
 STATUS = {
     update: function(mpd_status) {
+        if (! $('#currentsong, #currentsong-mini').length) return;
         if (typeof mpd_status !== 'undefined') {
             STATUS.update_bitrate(mpd_status.bitrate);
             STATUS.update_time(mpd_status.time);
@@ -213,6 +216,7 @@ CONTROLS = {
     volume_off: 0, // allows to toggle mute
 
     init: function() {
+        if (! $('#controls').length) return;
         CONTROLS.bind_playback_controls();
         CONTROLS.bind_playback_options();
         CONTROLS.bind_volume_controls();
@@ -266,6 +270,7 @@ CONTROLS = {
     },
 
     update: function(mpd_status) {
+        if (! $('#controls').length) return;
         CONTROLS.volume = parseInt(mpd_status.volume);
         CONTROLS.update_playback_options(mpd_status);
         CONTROLS.update_volume_label(CONTROLS.volume);
@@ -293,7 +298,6 @@ CONTROLS = {
 }
 
 POLLER = {
-    page: window.location.pathname,
     updating_db: false,
 
     on_poll_success: function(mpd_status) {
@@ -309,8 +313,7 @@ POLLER = {
 
         CONTROLS.update(mpd_status);
 
-        if (POLLER.page == '/playlist'
-            && mpd_status.playlist != PLAYLIST.version) {
+        if (mpd_status.playlist != PLAYLIST.version) {
             PLAYLIST.fetch(mpd_status.playlist);
         }
 
@@ -319,7 +322,7 @@ POLLER = {
             ALERTS.alert_db_update_in_progress();
         } else {
             if (POLLER.updating_db) {
-                if (POLLER.page == '/library') LIBRARY.artists.fetch();
+                LIBRARY.artists.fetch();
                 POLLER.updating_db = false;
                 ALERTS.alert_db_update_finished();
             }
@@ -367,6 +370,7 @@ PLAYLIST = {
     },
 
     fetch: function(version) {
+        if (! $('#playlist').length) return;
         $.ajax({
             url: $SCRIPT_ROOT + '/mpd/playlistinfo',
             dataType: 'json',
@@ -416,6 +420,7 @@ PLAYLIST = {
     },
 
     currentsong: function(pos) {
+        if (! $('#playlist').length) return;
         $('#playlist tbody tr').removeAttr('style');
         if (typeof pos !== 'undefined') {
             $('#playlist tbody tr td.pl-pos').filter(function() {
@@ -529,6 +534,7 @@ LIBRARY = {
 
     artists: {
         fetch: function() {
+            if (! $('#lib-artists').length) return;
             $.ajax({
                 url: $SCRIPT_ROOT + '/mpd/list?' + artist_tag,
                 dataType: 'json',

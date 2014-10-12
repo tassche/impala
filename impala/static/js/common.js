@@ -87,7 +87,6 @@ LAYOUT = {
 
     resize_components: function() {
         var height = $(window).height();
-
         height -= 50; // body padding-top
         height -= $('#alert:visible').outerHeight(true);
         height -= $('#currentsong-mini').outerHeight(true);
@@ -246,17 +245,23 @@ CONTROLS = {
 
     bind_volume_controls: function() {
         $('#volume-down').click(function(event) {
-            var new_volume = (CONTROLS.volume < 5) ? 0 : CONTROLS.volume-5;
-            $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+            var volume = (CONTROLS.volume < 5) ? 0 : CONTROLS.volume - 5;
+            $.get($SCRIPT_ROOT + '/mpd/setvol?' + volume);
         });
         $('#volume-up').click(function(event) {
-            var new_volume = (CONTROLS.volume > 95) ? 100 : CONTROLS.volume+5;
-            $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+            var volume = (CONTROLS.volume > 95) ? 100 : CONTROLS.volume + 5;
+            $.get($SCRIPT_ROOT + '/mpd/setvol?' + volume);
         });
         $('#volume-off').click(function(event) {
-            new_volume = (CONTROLS.volume_off > 0) ? CONTROLS.volume_off : 0;
-            CONTROLS.volume_off = (CONTROLS.volume_off > 0) ? 0 : CONTROLS.volume;
-            $.get($SCRIPT_ROOT + '/mpd/setvol?' + new_volume);
+            var volume;
+            if (CONTROLS.volume_off > 0) {
+                volume = CONTROLS.volume_off;
+                CONTROLS.volume_off = 0;
+            } else {
+                volume = 0;
+                CONTROLS.volume_off = CONTROLS.volume;
+            }
+            $.get($SCRIPT_ROOT + '/mpd/setvol?' + volume);
         });
     },
 
@@ -304,7 +309,8 @@ POLLER = {
 
         CONTROLS.update(mpd_status);
 
-        if (POLLER.page == '/playlist' && mpd_status.playlist != PLAYLIST.version) {
+        if (POLLER.page == '/playlist'
+            && mpd_status.playlist != PLAYLIST.version) {
             PLAYLIST.fetch(mpd_status.playlist);
         }
 
@@ -432,9 +438,9 @@ PLAYLIST = {
 LIBRARY = {
     breadcrumbs: {
         elements: {
-            home: $('<a id="lib-breadcrumb-home" href="#">'),
-            artist: $('<a id="lib-breadcrumb-artist" href="#">'),
-            album: $('<a id="lib-breadcrumb-album" href="#">')
+            home    : $('<a id="lib-breadcrumb-home" href="#">'),
+            artist  : $('<a id="lib-breadcrumb-artist" href="#">'),
+            album   : $('<a id="lib-breadcrumb-album" href="#">')
         },
 
         init: function() {
@@ -593,9 +599,8 @@ LIBRARY = {
                 success: function(songs) {
                     var albums = [], last_album; // js has no set object
                     for (var i = 0; i < songs.length; i++) {
-                        var album = new Album(
-                            songs[i][artist_tag], songs[i].date, songs[i].album
-                        );
+                        var album = new Album(songs[i][artist_tag],
+                            songs[i].date, songs[i].album);
                         if (!album.equals(last_album)) {
                             albums.push(album);
                             last_album = album;
@@ -782,21 +787,14 @@ LIBRARY = {
 }
 
 
-
 $(document).ready(function() {
     NAVBAR.init();
     NAVBAR.update();
-
     QUICKNAV.update();
-
     LAYOUT.init();
-
     CONTROLS.init();
 });
 
-
-
-/// HELPERS ///
 
 function get_viewport_class() {
     var w = window.outerWidth;
@@ -822,12 +820,8 @@ function seconds_to_str(seconds) {
     var dhms = seconds_to_dhms(seconds);
     var d = dhms[0], h = dhms[1], m = dhms[2], s = dhms[3];
     var str = ((m > 9) ? m : '0' + m) + ':' + ((s > 9) ? s : '0' + s);
-    if (h > 0) {
-        str = ((h > 9) ? h : '0' + h) + ':' + str;
-    }
-    if (d > 0) {
-        str = d.toString() + 'd ' + str;
-    }
+    if (h > 0) str = ((h > 9) ? h : '0' + h) + ':' + str;
+    if (d > 0) str = d.toString() + 'd ' + str;
     return str;
 }
 

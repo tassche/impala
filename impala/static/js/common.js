@@ -19,8 +19,9 @@
  */
 
 ICONS = {
-    add: '<span class="glyphicon glyphicon-plus"></span>',
-    play: '<span class="glyphicon glyphicon-play"></span>'
+    add     : '<span class="glyphicon glyphicon-plus"></span>',
+    remove  : '<span class="glyphicon glyphicon-remove"></span>',
+    play    : '<span class="glyphicon glyphicon-play"></span>'
 }
 
 ALERTS = {
@@ -371,43 +372,45 @@ PLAYLIST = {
     },
 
     populate: function(playlistinfo) {
-        // clear existing playlist
+        var td_pos = '<td class="pl-pos">',
+            td_track = '<td class="pl-track hidden-xs no-stretch">',
+            td_title = '<td class="pl-title hidden-xs">',
+            td_artist = '<td class="pl-artist hidden-xs">',
+            td_album = '<td class="pl-album hidden-xs">',
+            td_date = '<td class="pl-date hidden-xs no-stretch text-right">',
+            td_time = '<td class="pl-time hidden-xs no-stretch text-right">',
+            td_xs = '<td class="pl-xs hidden-sm hidden-md hidden-lg">',
+            td_rm = '<td class="pl-rm no-stretch">';
+
         $('#playlist tbody tr').remove();
-        // populate playlist
         $.each(playlistinfo, function(i, song) {
             $('<tr>').append(
-                $('<td class="pl-pos">').text(song.pos),
-                $('<td class="pl-track hidden-xs no-stretch">').text(song.track),
-                $('<td class="pl-title hidden-xs">').text(song.title),
-                $('<td class="pl-artist hidden-xs">').text(song.artist),
-                $('<td class="pl-album hidden-xs">').text(song.album),
-                $('<td class="pl-date hidden-xs no-stretch text-right">').text(
-                    song.date
-                ),
-                $('<td class="pl-time hidden-xs no-stretch text-right">').text(
-                    seconds_to_str(song.time)
-                ),
-                $('<td class="pl-xs hidden-sm hidden-md hidden-lg">').html(
+                $(td_pos).text(song.pos),
+                $(td_track).text(song.track),
+                $(td_title).text(song.title),
+                $(td_artist).text(song.artist),
+                $(td_album).text(song.album),
+                $(td_date).text(song.date),
+                $(td_time).text(seconds_to_str(song.time)),
+                $(td_xs).html(
                     '<p>' + song.title + '</p>' +
                     '<p class="text-muted"><small>' +
                         song.artist + ' - ' + song.album +
                     '</small></p>'
                 ),
-                $('<td class="pl-rm no-stretch">').html(
-                    '<span class="glyphicon glyphicon-remove"></span>'
-                )
+                $(td_rm).html(ICONS.remove)
             ).appendTo('#playlist');
         });
-        // hide the pos column
         $('#playlist tbody tr td.pl-pos').hide();
+
         // bind handlers
         $('#playlist tbody tr').click(PLAYLIST.on_song_clicked);
-        $('#playlist tbody tr td.pl-rm').click(PLAYLIST.on_song_delete_clicked);
+        $('#playlist tbody tr td.pl-rm')
+            .click(PLAYLIST.on_song_delete_clicked);
     },
 
     currentsong: function(pos) {
         $('#playlist tbody tr').removeAttr('style');
-
         if (typeof pos !== 'undefined') {
             $('#playlist tbody tr td.pl-pos').filter(function() {
                 return $(this).text() === pos;
@@ -416,8 +419,7 @@ PLAYLIST = {
     },
 
     on_song_clicked: function(event) {
-        var pos = $(this).find('td.pl-pos').text();
-        $.get($SCRIPT_ROOT + '/mpd/play?' + pos);
+        $.get($SCRIPT_ROOT + '/mpd/play?' + $(this).find('td.pl-pos').text());
     },
 
     on_song_delete_clicked: function(event) {

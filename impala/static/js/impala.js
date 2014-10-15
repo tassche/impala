@@ -89,11 +89,11 @@ LAYOUT = {
         var height = $(window).height();
         height -= 50; // body padding-top
         height -= $('#alert:visible').outerHeight(true);
-        height -= $('#currentsong-mini').outerHeight(true);
-        height -= $('#controls').outerHeight(true);
-        height -= $('#quicknav').outerHeight(true);
+        height -= $('#currentsong-mini:visible').outerHeight(true);
+        height -= $('#controls:visible').outerHeight(true);
+        height -= $('#quicknav:visible').outerHeight(true);
 
-        height -= $('#lib-breadcrumbs').outerHeight(true);
+        height -= $('#lib-breadcrumbs:visible').outerHeight(true);
 
         $('#content').css('height', height);
         $('#content .content').css('height', height);
@@ -159,8 +159,7 @@ CURRENTSONG = {
             success: CURRENTSONG.update,
             error: function() {
                 CURRENTSONG.update();
-            },
-            complete: LAYOUT.resize_components
+            }
         });
     },
 
@@ -177,6 +176,7 @@ CURRENTSONG = {
             $('#currentsong-album').text('');
             $('#currentsong-date').text('');
         }
+        LAYOUT.resize_components();
     }
 }
 
@@ -474,6 +474,9 @@ LIBRARY = {
                     LIBRARY.breadcrumbs.elements.artist.text(artist)
                 )
             );
+            if ($("#lib-breadcrumbs").is(':visible')) {
+                LAYOUT.resize_components();
+            }
         },
 
         set_album: function(album) {
@@ -483,6 +486,9 @@ LIBRARY = {
                     LIBRARY.breadcrumbs.elements.album.text(album)
                 )
             );
+            if ($("#lib-breadcrumbs").is(':visible')) {
+                LAYOUT.resize_components();
+            }
         }
     },
 
@@ -495,7 +501,6 @@ LIBRARY = {
             } else {
                 LIBRARY.viewport.show_all();
             }
-            LAYOUT.resize_components();
         },
 
         show_albums: function() {
@@ -506,7 +511,6 @@ LIBRARY = {
             } else {
                 LIBRARY.viewport.show_all();
             }
-            LAYOUT.resize_components();
         },
 
         show_songs: function() {
@@ -517,7 +521,6 @@ LIBRARY = {
             } else {
                 LIBRARY.viewport.show_all();
             }
-            LAYOUT.resize_components();
         },
 
         show_all: function() {
